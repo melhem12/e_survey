@@ -27,4 +27,23 @@ class mySurveyApi {
     }
     return claims;
   }
+
+
+
+  Future<int> get_count(String userId ) async {
+    int counter=0;
+    try {
+      Response response = await get(
+          Uri.parse('http://localhost:8083/api/v1/esurvey/esurveyController/getSurveyCount?userId='+userId));
+
+      Map <String,dynamic>map=json.decode(response.body);
+      counter=map['counter'];
+    }catch(e ){
+      print('error=$e');
+    }
+    return counter;
+  }
+
+
+
 }

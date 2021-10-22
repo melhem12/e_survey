@@ -14,14 +14,15 @@ class mySurvey extends StatefulWidget {
 
 class _mySurveyState extends State<mySurvey> {
 List <claimsResponse> claims=[];
-  @override
 
-  Future<void> initState()
+  @override
+ void  initState()
   async {
     claims = await  mySurveyApi().get_data("MMEHDI");
 
     super.initState();
   }
+
 
   Widget build(BuildContext context) {
     return Scaffold(
