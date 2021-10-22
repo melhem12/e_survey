@@ -9,7 +9,7 @@ class mySurveyApi {
   Future<List<claimsResponse>> get_data(String userId ) async {
     try {
       Response response = await get(
-          Uri.parse('http://localhost:8083/api/v1/esurvey/constant/getDailySurvey?userId='+userId));
+          Uri.parse('http://localhost:8083/api/v1/esurvey/esurveyController/getDailySurvey?userId='+userId));
 
       claims = [];
       final extractedData = json.decode(response.body)['claimBeanList'];
@@ -18,7 +18,8 @@ class mySurveyApi {
           notificationId: i["notificationId"],
           claimStatusCode: i['claimStatusCode'],
             reportedDate:i['reportedDate'],
-            companyCode:i['companyCode']
+            companyCode:i['companyCode'],
+            notification:i['notification']
         ));
       }
     }catch(e ){

@@ -43,7 +43,7 @@ List <claimsResponse> claims=[];
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          claims[index].notificationId,
+                          claims[index].notification,
                           style: TextStyle(
                             fontSize: 16.0,
                             fontStyle: FontStyle.italic,
