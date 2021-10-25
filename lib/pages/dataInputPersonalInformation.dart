@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:e_survey/Models/company.dart';
+import 'package:e_survey/pages/dataInputCarInformation.dart';
 import 'package:e_survey/service/companyService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +26,14 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
 
    DateTime? dob  = DateTime.now();
    TextEditingController _textEditingdobController = TextEditingController();
+
+   final firstNameController = TextEditingController();
+   final fatherNameController = TextEditingController();
+   final lastNameController = TextEditingController();
+   final phoneNumberController = TextEditingController();
+   final licenseNumber = TextEditingController();
+
+
 
 
 
@@ -67,6 +76,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                         style: TextStyle(
                           color: Color.fromARGB(255, 38, 97, 250),
                         ),
+                        controller: firstNameController,
                         decoration: InputDecoration(
                           labelText: 'First Name',
                           isDense: true,
@@ -91,6 +101,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                         style: TextStyle(
                           color: Color.fromARGB(255, 38, 97, 250),
                         ),
+                        controller: fatherNameController,
                         decoration: InputDecoration(
                           labelText: 'Father Name',
                           isDense: true,
@@ -116,6 +127,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                         style: TextStyle(
                           color: Color.fromARGB(255, 38, 97, 250),
                         ),
+                        controller: lastNameController,
                         decoration: InputDecoration(
                           labelText: 'Last Name',
                           isDense: true,
@@ -141,6 +153,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                         style: TextStyle(
                           color: Color.fromARGB(255, 38, 97, 250),
                         ),
+                        controller: phoneNumberController,
                         decoration: InputDecoration(
                           labelText: 'Phone Number',
                           isDense: true,
@@ -242,6 +255,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                         style: TextStyle(
                           color: Color.fromARGB(255, 38, 97, 250),
                         ),
+                        controller: licenseNumber,
                         decoration: InputDecoration(
                           labelText: 'License Number',
                           isDense: true,
@@ -339,7 +353,12 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     color: Colors.white,
                                     size: 30,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => DataInputCarInformation(value:firstNameController.text)
+
+                                    ));
+                                  },
                                   style: ElevatedButton.styleFrom(
                                       primary: Color.fromARGB(255, 38, 97, 250),
                                       textStyle: TextStyle(

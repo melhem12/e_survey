@@ -21,10 +21,9 @@ class _SigninState extends State<Signin> {
 
   final _formKey = GlobalKey<FormState>();
   Future save() async {
-    var res = await http.post(Uri.parse(AppUrl.login),
-        headers: <String, String>{
-          'Context-Type': 'application/json;charSet=UTF-8'
-        },
+    var res = await http.post(Uri.parse('http://192.168.55.116:8083/api/v1/auth/login'),
+        headers: <String, String> {'Content-type': 'application/json; charset=UTF-8',
+    },
         body: <String, String>{
           'userId': user.userId,
           'password': user.password

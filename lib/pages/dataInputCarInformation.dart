@@ -3,18 +3,31 @@ import 'package:e_survey/Models/company.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
+
 class DataInputCarInformation extends StatefulWidget {
-  const DataInputCarInformation({Key? key}) : super(key: key);
+
+  //const DataInputCarInformation({Key? key}) : super(key: key);
+
+  String?  value;
+  DataInputCarInformation({this.value});
 
   @override
-  _DataInputCarInformationState createState() => _DataInputCarInformationState();
+  _DataInputCarInformationState createState() => _DataInputCarInformationState(value);
+
 }
 
 class _DataInputCarInformationState extends State<DataInputCarInformation> {
+
+ String?  value;
+ _DataInputCarInformationState(this.value);
  double height =15;
+ final yearController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+yearController.text=value!;
+
     return MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
@@ -79,7 +92,9 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                   color: Color.fromARGB(255, 38, 97, 250),
                 ),
                 keyboardType: TextInputType.number,
+                controller: yearController,
                 decoration: InputDecoration(
+
                   labelText: 'Year',
                   isDense: true,
                   labelStyle: TextStyle(

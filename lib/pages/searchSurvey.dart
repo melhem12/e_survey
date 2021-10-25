@@ -14,13 +14,23 @@ class _SearchSurveyState extends State<SearchSurvey> {
 double height=15;
   Company selectedCompany = Company( companyId:0,companyName:"");
   List<Company> d =[];
-
+ late String selectedValue;
+List<Company> Companies=[];
   CompanyService s = CompanyService();
+String _value = '';
+late List<DropdownMenuItem<int>> _menuItems;
+
+_asyncMethod() async {
+  s.get_data() ;
+   Companies=s.companies;
+}
+
   @override
-  void initState() {
- s.get_data() ;
- d=s.companies;
+  void initState()  {
+   _asyncMethod();
+print(Companies);
     super.initState();
+
   }
 
   @override
@@ -52,28 +62,22 @@ double height=15;
                           color: Colors.black,
                         )),
                   ),
-                  DropdownButton<Company>(
-                    hint:  Text("Select item"),
-                    value: selectedCompany,
-                     // onChanged: (Company Value) {
-                     //  setState(() {
-                     //     selectedCompany = Value;
-                     //   });
-                     // },
-                    items: d.map((Company company) {
-                      return  DropdownMenuItem<Company>(
-                        value: company,
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              company.companyName,
-                              style:  TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
+            DropdownButton(
+              value: _value,
+              icon: Icon(Icons.keyboard_arrow_down),
+              items:Companies.map((Company items) {
+                return DropdownMenuItem(
+                    value: items.companyId,
+                    child: Text(items.companyName)
+                );
+              }
+              ).toList(),
+              onChanged: (newValue){
+                setState(() {
+                  _value = newValue.toString();
+                });
+              },
+            ),
                   TextField(
                     style: TextStyle(
                       color: Color.fromARGB(255, 38, 97, 250),

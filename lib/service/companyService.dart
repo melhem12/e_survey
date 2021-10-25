@@ -8,22 +8,25 @@ class CompanyService {
 
 
 
-  Future<void> get_data() async {
+  Future<List<Company>> get_data() async {
     try {
       Response response = await get(
-          Uri.parse('http://localhost:8083/api/v1/esurvey/constant/companiesList'));
+          Uri.parse('http://192.168.55.116:8083/api/v1/auth/constant/getDoors'));
 
       companies = [];
       final extractedData = json.decode(response.body);
-      // List companiesData = extractedData['companyBeanList'];
-      for (var i in extractedData) {
+       List companiesData = extractedData['companyBeanList'];
+      for (var i in companiesData) {
         companies.add(Company(
           companyId: i["companyId"],
           companyName: i['companyName'],
         ));
       }
-    }catch(e ){
+      print(companies);
+      return companies;
+    }catch( Exception ){
 print('error=$e');
+throw Exception(e.toString());
     }
   }
 }

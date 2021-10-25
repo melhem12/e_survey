@@ -5,12 +5,13 @@ import 'package:e_survey/pages/home.dart';
 import 'package:e_survey/pages/mySurvey.dart';
 import 'package:e_survey/pages/parts.dart';
 import 'package:e_survey/pages/searchSurvey.dart';
+import 'package:e_survey/pages/signin.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MaterialApp(
   initialRoute: '/',
   routes: {
-    '/': (context) => DataInputPersonalInformation(),
+    '/': (context) =>SearchSurvey(),
     '/dashboard': (context) => Dashboard(),
     '/home': (context) => Home(),
     '/mySurvey': (context) => mySurvey(),

@@ -1,6 +1,7 @@
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+//import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
 
@@ -28,7 +29,7 @@ class _HomeState extends State<Home> {
               Expanded(
 
                 flex: 1, child:   Text("Home",
-                  style: GoogleFonts.pacifico(
+                 style: GoogleFonts.pacifico(
                       fontWeight: FontWeight.bold, fontSize: 40, color: Colors.blue)),
               ),
               Expanded(
