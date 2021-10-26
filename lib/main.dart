@@ -11,9 +11,10 @@ import 'package:flutter/material.dart';
 void main() => runApp(MaterialApp(
   initialRoute: '/',
   routes: {
-    '/': (context) =>SearchSurvey(),
+    '/home': (context) =>Home(),
     '/dashboard': (context) => Dashboard(),
-    '/home': (context) => Home(),
+    '/': (context) => Signin(),
     '/mySurvey': (context) => mySurvey(),
+    '/SearchSurvey': (context) => SearchSurvey(),
   },
 ));

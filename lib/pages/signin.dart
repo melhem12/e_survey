@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'home.dart';
+
 class Signin extends StatefulWidget {
 
   @override
@@ -18,16 +20,38 @@ class _SigninState extends State<Signin> {
   SharedPreferences? _prefs;
   static const String tokenPrefKey = 'token_pref';
   static const String userIDPrefKey = 'userId_pref';
-
+String savedUid ="";
   final _formKey = GlobalKey<FormState>();
+  @override
+  void  initState()
+  {
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() =>
+      this._prefs=prefs);
+_loadUserId();
+      if(savedUid.isNotEmpty){
+        Navigator.pushNamed(context, "/home");
+      }
+    });
+
+
+    super.initState();
+  }
   Future save() async {
-    var res = await http.post(Uri.parse('http://192.168.55.116:8083/api/v1/auth/login'),
-        headers: <String, String> {'Content-type': 'application/json; charset=UTF-8',
-    },
-        body: <String, String>{
+    var res = await http.post(Uri.parse(AppUrl.login),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        }
+    ,
+
+        body: jsonEncode(<String, String>{
           'userId': user.userId,
           'password': user.password
-        });
+        }),);
+        // body: <String, String>{
+        //   'userId': user.userId,
+        //   'password': user.password
+        // });
     print(res.body);
    Map <String,dynamic>map =  jsonDecode(res.body);
      //data = json.decode(res.body);
@@ -35,7 +59,7 @@ class _SigninState extends State<Signin> {
     String tok =map['token'];
     _setStringPref( uid,tok);
     Navigator.push(
-        context, new MaterialPageRoute(builder: (context) => Dashboard()));
+        context, new MaterialPageRoute(builder: (context) => Home()));
   }
 
   User user = User('', '');
@@ -113,9 +137,9 @@ class _SigninState extends State<Signin> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextFormField(
-                    controller: TextEditingController(text: user.userId),
+                    controller: TextEditingController(text: user.password),
                     onChanged: (value) {
-                      user.userId = value;
+                      user.password = value;
                     },
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -198,8 +222,13 @@ class _SigninState extends State<Signin> {
       ],
     ));
   }
-  Future<void> _setStringPref(String token ,String userId) async {
+  Future<void> _setStringPref(String userId ,String token) async {
     await this._prefs?.setString(tokenPrefKey, token);
     await this._prefs?.setString(userIDPrefKey, userId);
+  }
+  void _loadUserId(){
+    setState(() {
+      this.savedUid=this._prefs?.getString(userIDPrefKey)??"";
+    });
   }
 }

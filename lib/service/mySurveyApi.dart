@@ -1,6 +1,9 @@
 import 'package:e_survey/Models/claimsResponse.dart';
-import 'package:http/http.dart';
+import 'package:e_survey/utility/app_url.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:http/http.dart';
 
 class mySurveyApi {
   List<claimsResponse> claims = [];
@@ -9,7 +12,7 @@ class mySurveyApi {
   Future<List<claimsResponse>> get_data(String userId ) async {
     try {
       Response response = await get(
-          Uri.parse('http://localhost:8083/api/v1/esurvey/esurveyController/getDailySurvey?userId='+userId));
+          Uri.parse(AppUrl.dailySurvey+userId));
 
       claims = [];
       final extractedData = json.decode(response.body)['claimBeanList'];
@@ -32,15 +35,17 @@ class mySurveyApi {
 
   Future<int> get_count(String userId ) async {
     int counter=0;
-    try {
-      Response response = await get(
-          Uri.parse('http://localhost:8083/api/v1/esurvey/esurveyController/getSurveyCount?userId='+userId));
+    var response = await   http.get(Uri.parse(AppUrl.surveyCount+userId));
 
+
+    if (response.statusCode == 200) {
       Map <String,dynamic>map=json.decode(response.body);
       counter=map['counter'];
-    }catch(e ){
-      print('error=$e');
+    } else {
+
+      throw Exception('Failed to  get counter');
     }
+
     return counter;
   }
 

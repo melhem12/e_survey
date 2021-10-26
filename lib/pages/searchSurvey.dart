@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:e_survey/Models/company.dart';
 import 'package:flutter/material.dart';
 import 'package:e_survey/service/companyService.dart';
+import 'package:http/http.dart';
 class SearchSurvey extends StatefulWidget {
 
 
@@ -15,26 +18,53 @@ double height=15;
   Company selectedCompany = Company( companyId:0,companyName:"");
   List<Company> d =[];
  late String selectedValue;
-List<Company> Companies=[];
+List<Company> Companies=<Company>[];
   CompanyService s = CompanyService();
 String _value = '';
 late List<DropdownMenuItem<int>> _menuItems;
 
-_asyncMethod() async {
-  s.get_data() ;
-   Companies=s.companies;
+Future<void> _asyncMethod() async {
+  await s.get_data() ;
+
+}
+Future<List<Company>> get_data() async {
+  try {
+    Response response = await get(
+        Uri.parse('http://192.168.55.116:8083/api/v1/auth/constant/companiesList'));
+
+
+    final extractedData = json.decode(response.body);
+    if(extractedData != null) {
+      List companiesData = extractedData['companyBeanList'];
+      for (var i in companiesData) {
+        Companies.add(Company(
+          companyId: i["companyId"],
+          companyName: i['companyName'],
+
+        ));
+        print(i["companyId"]);
+      }
+      //    print(companies);
+
+    }
+    return Companies;
+  }catch( e ){
+    print('error=$e');
+    throw Exception(e.toString());
+  }
 }
 
   @override
   void initState()  {
-   _asyncMethod();
-print(Companies);
+print("asdasdasd");
+get_data();
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
+
+  print(Companies);
     return   MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,

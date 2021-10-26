@@ -12,7 +12,7 @@ InputDecoration buildInputDecoration(String hintText, IconData icon) {
 
 Card makeDashboardItem(String title, IconData icon,String path,BuildContext context) {
   return Card(
-      elevation: 1.5,
+      elevation: 2,
       margin: new EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),

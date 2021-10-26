@@ -23,7 +23,7 @@ class CompanyService {
             companyName: i['companyName'],
           ));
         }
-        print(companies);
+    //    print(companies);
 
       }
       return companies;

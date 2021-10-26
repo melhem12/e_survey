@@ -10,12 +10,22 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int counter=0;
+  int counter=10;
   @override
-  void initState() {
-    counter= mySurveyApi().get_count("MMEHDI") as int;
+  void initState()  {
+    asyncMethod();
     super.initState();
   }
+
+  void asyncMethod() async {
+    counter=  await mySurveyApi().get_count("MMEHDI");
+setState(() {
+  counter;
+});
+    // ....
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +53,7 @@ mainAxisAlignment: MainAxisAlignment.start,
    child: GridView.count(
     crossAxisCount: 1,
 
-    padding: EdgeInsets.all(3.0),
+    padding: EdgeInsets.all(50.0),
     children: <Widget>[
 
       // Text(""),

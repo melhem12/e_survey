@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:e_survey/pages/signin.dart';
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
@@ -9,7 +13,27 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
+
 class _HomeState extends State<Home> {
+  SharedPreferences? _prefs;
+  static const String tokenPrefKey = 'token_pref';
+  static const String userIDPrefKey = 'userId_pref';
+  String userId="";
+  @override
+  void  initState()
+  {
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() =>
+        this._prefs=prefs);
+      _loadUserId();
+      log("///////////////////");
+      log(userId);
+    });
+
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +66,7 @@ class _HomeState extends State<Home> {
 
                     // Text(""),
                     makeDashboardItem("My Survey", Icons.task,"/dashboard",context),
-                    makeDashboardItem("new survey", Icons.search,"/new Survey",context),
+                    makeDashboardItem("new survey", Icons.search,"/SearchSurvey",context),
                     //makeDashboardItem("", Icons.task,"/",context),
 
                   ],
@@ -59,5 +83,10 @@ class _HomeState extends State<Home> {
 
 
     );
+  }
+  void _loadUserId(){
+    setState(() {
+      this.userId=this._prefs?.getString(userIDPrefKey)??"";
+    });
   }
 }

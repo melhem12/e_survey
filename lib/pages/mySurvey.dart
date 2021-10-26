@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:e_survey/Models/claimsResponse.dart';
 import 'package:e_survey/service/mySurveyApi.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -14,15 +16,37 @@ class mySurvey extends StatefulWidget {
 
 class _mySurveyState extends State<mySurvey> {
 List <claimsResponse> claims=[];
-
+SharedPreferences? _prefs;
+static const String tokenPrefKey = 'token_pref';
+static const String userIDPrefKey = 'userId_pref';
+String userId="";
   @override
  void  initState()
-  async {
-    claims = await  mySurveyApi().get_data("MMEHDI");
+   {
+     SharedPreferences.getInstance().then((prefs) {
+     setState(() =>
+     this._prefs=prefs);
+     _loadUserId();
+     log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+     log(userId);
+     asyncMethod(userId);
+
+     }) ;
 
     super.initState();
   }
 
+void asyncMethod(String uId) async {
+  claims=  await mySurveyApi().get_data(uId);
+  // claimsResponse c  =  claimsResponse(notificationId:'sjbbabf',claimStatusCode:'djkfkfjad',reportedDate:'djdj',companyCode:'ddjd', notification: 'ccc');
+  // claimsResponse d  =  claimsResponse(notificationId:'sjbbabf',claimStatusCode:'djkfkfjad',reportedDate:'djdj',companyCode:'ddjd', notification: 'ccc');
+  //
+  // claims.add(c);
+  // claims.add(d);
+  setState(() {
+    claims;
+  });
+}
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,5 +102,9 @@ List <claimsResponse> claims=[];
     );
   }
 
-
+void _loadUserId(){
+  setState(() {
+    this.userId=this._prefs?.getString(userIDPrefKey)??"";
+  });
+}
 }
