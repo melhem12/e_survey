@@ -18,10 +18,11 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void asyncMethod() async {
-    counter=  await mySurveyApi().get_count("MMEHDI");
+   int  count=  await mySurveyApi().get_count("MMEHDI");
 setState(() {
-  counter;
-});
+  counter=count;
+}
+);
     // ....
   }
 
@@ -51,9 +52,9 @@ mainAxisAlignment: MainAxisAlignment.start,
     Expanded(
  flex:6,
    child: GridView.count(
-    crossAxisCount: 1,
+    crossAxisCount: 2,
 
-    padding: EdgeInsets.all(50.0),
+    padding: EdgeInsets.all(3.0),
     children: <Widget>[
 
       // Text(""),
@@ -68,28 +69,7 @@ mainAxisAlignment: MainAxisAlignment.start,
 ]
 
         ,)
-      //   child: Text("Dashboard",
-      //       style: GoogleFonts.pacifico(
-      //           fontWeight: FontWeight.bold, fontSize: 50, color: Colors.blue)),
 
-
-
-        // child:
-        // GridView.count(
-        //   crossAxisCount: 2,
-        //   padding: EdgeInsets.all(3.0),
-        //   children: <Widget>[
-        //   Text("Dashboard",
-        //        style: GoogleFonts.pacifico(
-        //          fontWeight: FontWeight.bold, fontSize: 30, color: Colors.blue)),
-        //     Text(""),
-        //     makeDashboardItem("My Survey", Icons.task),
-        //     makeDashboardItem("Search My Survey", Icons.search),
-        //     makeDashboardItem("Daily Task Count", Icons.format_list_numbered),
-        //     makeDashboardItem("", Icons.task),
-        //
-        //   ],
-        // ),
 
        ),
 

@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:e_survey/Models/company.dart';
+import 'package:e_survey/args/SearrchSurveyArgs.dart';
+import 'package:e_survey/utility/app_url.dart';
 import 'package:flutter/material.dart';
 import 'package:e_survey/service/companyService.dart';
 import 'package:http/http.dart';
@@ -13,67 +16,26 @@ class SearchSurvey extends StatefulWidget {
 }
 
 class _SearchSurveyState extends State<SearchSurvey> {
-
+late Company _company = Company(companyId:0,companyName: '');
 double height=15;
-  Company selectedCompany = Company( companyId:0,companyName:"");
-  List<Company> d =[];
- late String selectedValue;
-List<Company> Companies=<Company>[];
-  CompanyService s = CompanyService();
-String _value = '';
-late List<DropdownMenuItem<int>> _menuItems;
-
-Future<void> _asyncMethod() async {
-  await s.get_data() ;
-
-}
-Future<List<Company>> get_data() async {
-  try {
-    Response response = await get(
-        Uri.parse('http://192.168.55.116:8083/api/v1/auth/constant/companiesList'));
-
-
-    final extractedData = json.decode(response.body);
-    if(extractedData != null) {
-      List companiesData = extractedData['companyBeanList'];
-      for (var i in companiesData) {
-        Companies.add(Company(
-          companyId: i["companyId"],
-          companyName: i['companyName'],
-
-        ));
-        print(i["companyId"]);
-      }
-      //    print(companies);
-
-    }
-    return Companies;
-  }catch( e ){
-    print('error=$e');
-    throw Exception(e.toString());
-  }
-}
-
-  @override
-  void initState()  {
-print("asdasdasd");
-get_data();
-    super.initState();
-  }
+String passNum='';
+String policyNumber='';
+String plateNum='';
+String plateChar='';
 
   @override
   Widget build(BuildContext context) {
 
-  print(Companies);
     return   MaterialApp(
+      
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-          backgroundColor: Colors.grey,
-          appBar: AppBar(title: Text("asdsadasdas")),
+          backgroundColor: Colors.white,
+          appBar: AppBar(title: Text("Search survey")),
           body: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
@@ -92,42 +54,83 @@ get_data();
                           color: Colors.black,
                         )),
                   ),
-            DropdownButton(
-              value: _value,
-              icon: Icon(Icons.keyboard_arrow_down),
-              items:Companies.map((Company items) {
-                return DropdownMenuItem(
-                    value: items.companyId,
-                    child: Text(items.companyName)
-                );
-              }
-              ).toList(),
-              onChanged: (newValue){
-                setState(() {
-                  _value = newValue.toString();
-                });
-              },
-            ),
+
+                  Container(
+                    margin: new EdgeInsets.symmetric(vertical: 10.0),
+
+
+
+                    child :  FutureBuilder<List<Company>>(
+
+                          future: CompanyService().get_data(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<Company>> snapshot) {
+                            if (!snapshot.hasData) return CircularProgressIndicator();
+                            return DropdownButton<Company>(
+
+                              items: snapshot.data!
+                                  .map((comp) => DropdownMenuItem<Company>(
+                                child: Text(comp.companyName),
+
+
+                                value: comp,
+                              ))
+                                  .toList(),
+                              onChanged: ( value) {
+                                setState(() {
+                                  _company=value!;
+
+                                });
+                              },
+                              isExpanded: true,
+                              //value: _cu
+                              // rrentUser,
+                              hint: Text(_company.companyName.isEmpty?"Choose a company":_company.companyName
+                              ),
+
+                            );
+                          }),
+
+                  ),
+
+
+
+
+
+
+
+
+
+
+
+
                   TextField(
+                    onChanged: (String value){
+                      log("???????????????");
+                      passNum=value;
+                      log(value);
+                    },
                     style: TextStyle(
-                      color: Color.fromARGB(255, 38, 97, 250),
+                      color: Colors.blue,
                     ),
                     decoration: InputDecoration(
                       labelStyle: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
-                      labelText: 'Densed TextField',
+                      labelText: 'Pass Number',
                       isDense: true,
-                      hintText: "Enter a message",
+                      hintText: "Enter Pass Number",
                       fillColor: Colors.grey[300],
                       filled: true,
                       hintStyle: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
                       border: InputBorder.none,
                       focusedBorder: UnderlineInputBorder(
                         borderSide:
-                        BorderSide(color: Color.fromARGB(255, 38, 97, 250)),
+                        BorderSide(  color: Colors.blue,
+
+                        ),
                       ),
                     ),
                   ),
@@ -137,6 +140,14 @@ get_data();
                   Container(
                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
+
+
+
+
+
+
+
+
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -145,52 +156,75 @@ get_data();
                         Expanded(
                           flex: 6,
                           child: TextField(
+                            onChanged: (String value){
+                              log("???????????????");
+                              plateNum=value;
+                              log(value);
+                            },
                             style: TextStyle(
-                              color: Color.fromARGB(255, 38, 97, 250),
+
+                              color: Colors.blue,
                             ),
                             decoration: InputDecoration(
-                              labelText: 'Densed TextField',
+                              labelText: 'Plate Number',
                               labelStyle: TextStyle(
-                                color: Color.fromARGB(255, 38, 97, 250),
+                                color: Colors.blue,
                               ),
                               isDense: true,
-                              hintText: "Enter a message",
+
+                              hintText: "Plate Number",
                               fillColor: Colors.grey[300],
                               filled: true,
                               hintStyle: TextStyle(
-                                color: Color.fromARGB(255, 38, 97, 250),
+                                color: Colors.blue,
                               ),
                               border: InputBorder.none,
                               focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 38, 97, 250)),
+                                  color: Colors.blue,
+
+
+                                ),
                               ),
                             ),
                           ),
                         ),
                         SizedBox(width: 10.0),
+
+
+
+
+
+
+
                         Expanded(
                           flex: 6,
                           child: TextField(
+                            onChanged: (String value){
+                              log("???????????????");
+                              plateChar=value;
+                              log(value);
+                            },
                             style: TextStyle(
-                              color: Color.fromARGB(255, 38, 97, 250),
+                              color: Colors.blue,
                             ),
                             decoration: InputDecoration(
-                              labelText: 'Densed TextField',
+                              labelText: 'Plate Charachter',
                               labelStyle: TextStyle(
-                                color: Color.fromARGB(255, 38, 97, 250),
+                                color: Colors.blue,
                               ),
                               isDense: true,
-                              hintText: "Enter a message",
+                              hintText: "Plate Char",
                               fillColor: Colors.grey[300],
                               filled: true,
                               hintStyle: TextStyle(
-                                color: Color.fromARGB(255, 38, 97, 250),
+                                color: Colors.blue,
                               ),
                               border: InputBorder.none,
                               focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 38, 97, 250)),
+                                    color: Colors.blue,
+                                ),
                               ),
                             ),
                           ),
@@ -202,24 +236,29 @@ get_data();
                     height: height,
                   ),
                   TextField(
+                    onChanged: (String value){
+                      log("???????????????");
+                      policyNumber=value;
+                      log(value);
+                    },
                     style: TextStyle(
-                      color: Color.fromARGB(255, 38, 97, 250),
+                      color: Colors.blue,
                     ),
                     decoration: InputDecoration(
-                      labelText: 'Densed TextField',
+                      labelText: 'Policy Number ',
                       isDense: true,
                       labelStyle: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
-                      hintText: "Enter a message",
+                      hintText: "Enter Policy Number",
                       hintStyle: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
                       border: InputBorder.none,
                       fillColor: Colors.grey[300],
                       focusedBorder: UnderlineInputBorder(
                         borderSide:
-                        BorderSide(color: Color.fromARGB(255, 38, 97, 250)),
+                        BorderSide(color: Colors.blue),
                       ),
                       filled: true,
                     ),
@@ -227,6 +266,12 @@ get_data();
                   SizedBox(
                     height: height,
                   ),
+
+
+
+
+
+
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
@@ -239,9 +284,12 @@ get_data();
                                 color: Colors.white,
                                 size: 30,
                               ),
-                              onPressed: () {print(s);},
+                              onPressed: () {
+
+                             Navigator.pop(context);
+                              },
                               style: ElevatedButton.styleFrom(
-                                  primary: Color.fromARGB(255, 38, 97, 250),
+                                  primary: Colors.blue,
                                   textStyle: TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold)),
@@ -250,6 +298,13 @@ get_data();
                       SizedBox(
                         width: 10,
                       ),
+
+
+
+
+
+
+
                       Expanded(
                           flex: 1,
                           child: Container(
@@ -259,9 +314,12 @@ get_data();
                                 color: Colors.white,
                                 size: 30,
                               ),
-                              onPressed: () {print(d[1].companyName.toString());},
+
+                              onPressed: () {
+Navigator.pushNamed(context, "/Survey",arguments: SearrchSurveyArgs(_company.companyId.toString(),passNum,policyNumber,plateNum,plateChar));
+                              },
                               style: ElevatedButton.styleFrom(
-                                  primary: Color.fromARGB(255, 38, 97, 250),
+                                  primary: Colors.blue,
                                   textStyle: TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold)),

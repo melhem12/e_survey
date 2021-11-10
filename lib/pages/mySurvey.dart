@@ -37,14 +37,14 @@ String userId="";
   }
 
 void asyncMethod(String uId) async {
-  claims=  await mySurveyApi().get_data(uId);
   // claimsResponse c  =  claimsResponse(notificationId:'sjbbabf',claimStatusCode:'djkfkfjad',reportedDate:'djdj',companyCode:'ddjd', notification: 'ccc');
   // claimsResponse d  =  claimsResponse(notificationId:'sjbbabf',claimStatusCode:'djkfkfjad',reportedDate:'djdj',companyCode:'ddjd', notification: 'ccc');
   //
   // claims.add(c);
   // claims.add(d);
-  setState(() {
-    claims;
+  setState(() async {
+    claims=  await mySurveyApi().get_data(uId);
+
   });
 }
 

@@ -1,11 +1,12 @@
 import 'package:e_survey/Models/company.dart';
+import 'package:e_survey/utility/app_url.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class updatingInformationService {
 
-  Future<int> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId) async {
+  Future<bool> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId,String gender ) async {
     var req_body = new Map();
 
     if(carId.isNotEmpty && carId !=null) {
@@ -17,7 +18,9 @@ class updatingInformationService {
     if(carOwnerFamilyName.isNotEmpty && carOwnerFamilyName !=null) {
       req_body['carOwnerFamilyName'] = carOwnerFamilyName;
     }
-
+    if(gender.isNotEmpty && gender !=null) {
+      req_body['carDriverGender'] = gender;
+    }
     if(carOwnerFatherName.isNotEmpty && carOwnerFatherName !=null) {
       req_body['carOwnerFatherName'] = carOwnerFatherName;
     }
@@ -37,20 +40,17 @@ class updatingInformationService {
       req_body['userId'] = userId;
     }
     final response = await post(
-        Uri.parse('http://127.0.0.1:8081/user/register'),
+        Uri.parse(AppUrl.updateLossCarPersonalInformation),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(req_body));
     if (response.statusCode == 200) {
-      var object = json.decode(response.body);
-      return  200;
-    } else if (response.statusCode == 422) {
-      return 422;
-    } else {
-      return 500;
+     return true;
+    }else{
+    return false;
     }
   }
 
-  Future<int> updateCarInfo(String carId,String carBrandId,String carTradeMarkId,String carVehicleSize,String carBodyType,
+  Future<bool> updateCarInfo(String carId,String carBrandId,String carTradeMarkId,String carVehicleSize,String carBodyType,
       String carDoors,String carYear,String carChasisNumber,String carPlate,String carPolicyNumber,String userId) async {
     var req_body = new Map();
 
@@ -95,34 +95,13 @@ class updatingInformationService {
 
 
     final response = await post(
-        Uri.parse('http://127.0.0.1:8081/user/register'),
+        Uri.parse(AppUrl.updateLossCar),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(req_body));
     if (response.statusCode == 200) {
-      var object = json.decode(response.body);
-      return  200;
-    } else if (response.statusCode == 422) {
-      return 422;
-    } else {
-      return 500;
+      return  true;
+    } else  {
+      return false;
     }
   }
-
-  Future<void> getCarTradeMarkList(StringCarBrand) async {
-    try {
-      Response response = await get(
-          Uri.parse('http://localhost:8083/api/v1/esurvey/constant/companiesList'));
-
-      final extractedData = json.decode(response.body);
-      // List companiesData = extractedData['companyBeanList'];
-      for (var i in extractedData) {
-        // companies.add(Company(
-        //   companyId: i["carTrademarkId"],
-        //   companyName: i['carTrademarkDescription'],
-        //));
-      }
-    }catch(e ){
-      print('error=$e');
-    }
   }
-}
