@@ -10,7 +10,6 @@ class claimsApi{
   Future<List<ClaimDetailResponse>> get_claims_details(String notificationId ,String companyCode) async {
     var response = await   http.get(Uri.parse(AppUrl.claimsDetails+"notificationId="+notificationId+"&companyCode="+companyCode));
 
-
     if (response.statusCode == 200) {
       final claimsDetailsData = json.decode(response.body)['claimDetailBeanList'];
       for (var i in claimsDetailsData) {

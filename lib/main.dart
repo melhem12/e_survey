@@ -9,6 +9,7 @@ import 'package:e_survey/pages/dataInputCarInformation.dart';
 import 'package:e_survey/pages/dataInputPersonalInformation.dart';
 import 'package:e_survey/pages/driverLicenseImage.dart';
 import 'package:e_survey/pages/home.dart';
+import 'package:e_survey/pages/metPage.dart';
 import 'package:e_survey/pages/mySurvey.dart';
 import 'package:e_survey/pages/parts.dart';
 import 'package:e_survey/pages/requiredDocuments.dart';
@@ -20,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'args/claimsListArgs.dart';
 
 void main() => runApp(MaterialApp(
-  initialRoute: '/',
+  initialRoute: '/home',
   // onGenerateRoute: (settings){
   //   if(settings.name==DataInputPersonalInformation.routeName){
   //     final args = settings.arguments as claimsListArgs ;
@@ -46,11 +47,9 @@ void main() => runApp(MaterialApp(
     '/mySurvey': (context) => mySurvey(),
     '/Survey': (context) => Survey(),
     '/SearchSurvey': (context) => SearchSurvey(),
-    '/ClaimsList': (context) => ClaimsList(),
     '/CarInfoInput': (context) => CarInfoInput(),
     '/RequiredDocuments': (context) => RequiredDocuments(),
     '/DriverLicenceImage': (context) => DriverLicenceImage(),
     '/DriverLicenceDashboard': (context) => DriverLicenceDashboard(),
-    '/parts': (context) => parts(),
   },
 ));

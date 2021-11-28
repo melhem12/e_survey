@@ -19,6 +19,7 @@ class _HomeState extends State<Home> {
   static const String tokenPrefKey = 'token_pref';
   static const String userIDPrefKey = 'userId_pref';
   String userId="";
+
   @override
   void  initState()
   {
@@ -26,8 +27,13 @@ class _HomeState extends State<Home> {
       setState(() =>
         this._prefs=prefs);
       _loadUserId();
-      log("///////////////////");
-      log(userId);
+      if(userId.isEmpty){
+       Navigator.pushNamed(context, '/');
+      //   Navigator.pushAndRemoveUntil(
+      //       context,
+      //       MaterialPageRoute(builder: (BuildContext context) => Signin()),
+      // ModalRoute.withName('/'),);
+      }
     });
 
 
@@ -36,8 +42,68 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var drawerHeader = UserAccountsDrawerHeader(
+      accountName: Text(userId),
+      accountEmail: Text(userId),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.white,
+        child: Icon(Icons.person ,size: 65,color: Colors.blue,),
+      ),
+      // otherAccountsPictures: <Widget>[
+      //   CircleAvatar(
+      //     backgroundColor: Colors.yellow,
+      //     child: Text('A'),
+      //   ),
+      //   CircleAvatar(
+      //     backgroundColor: Colors.red,
+      //     child: Text('B'),
+      //   )
+      // ],
+    );
+    final drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        ListTile(
+          title:  Row(
+            children: <Widget>[
+              SizedBox(width: 5,),
+              Icon(Icons.home),
+              Text('Home'),
 
+            ],
+          ),
+
+          onTap: () => Navigator.of(context).pushNamed('/home'),
+
+        ),
+        ListTile(
+          title:  Row(
+            children: <Widget>[
+              SizedBox(width: 5,),
+              Icon(Icons.exit_to_app),
+          SizedBox(width: 5,),
+              Text('Logout'),
+
+            ],
+          ),
+
+          onTap: () async => {
+            await   _prefs!.clear(),
+            Navigator.of(context).pushNamed('/'),
+
+          }
+        ),
+
+      ],
+    );
+
+
+
+
+    return Scaffold(
+        drawer: Drawer(
+          child: drawerItems,
+        ),
       body:
       Container(
           height: double.infinity,

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:e_survey/args/claimsListArgs.dart';
 import 'package:e_survey/args/mySurveyArgs.dart';
 import 'package:e_survey/service/claimsApi.dart';
+import 'package:e_survey/utility/sql_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dataInputPersonalInformation.dart';
 
 class ClaimsList extends StatefulWidget {
-  const ClaimsList({Key? key}) : super(key: key);
+String ?notification ;
+  String ?companyCode ;
+String ?notificationId ;
+  ClaimsList(this.notification, this.companyCode,this.notificationId);
 
   @override
   _ClaimsListState createState() => _ClaimsListState();
@@ -18,11 +22,26 @@ class ClaimsList extends StatefulWidget {
 
 class _ClaimsListState extends State<ClaimsList> {
   SharedPreferences? _prefs;
+
+  static const String frontLicencePrefKey = 'front_licence_pref';
+  static const String pathsListPrefKey = 'pathsList_pref';
+  static const String backCarRegistrationrefKey = 'back_CarRegistration_pref';
+  static const String frontCarRegistrationPrefKey = 'front_CarRegistration_pref';
+  static const String policyPrefKey = 'policy_pref';
+  static const String vinPrefKey = 'vin';
+  static const String backLicencePrefKey = 'back_licence_pref';
+
+
   static const String userIDPrefKey = 'userId_pref';
   String savedUid = "";
 
   @override
   void initState() {
+    log("llllllllllll");
+    log(widget.notificationId.toString());
+    log(widget.notification.toString());
+    log(widget.companyCode.toString());
+
     SharedPreferences.getInstance().then((prefs) {
       setState(() => this._prefs = prefs);
       _loadUserId();
@@ -32,7 +51,7 @@ class _ClaimsListState extends State<ClaimsList> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as mySurveyArgs;
+   // final args = ModalRoute.of(context)!.settings.arguments as mySurveyArgs;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -84,7 +103,7 @@ class _ClaimsListState extends State<ClaimsList> {
 
 
 
-          _insertLossCar(args.notification, savedUid);
+          _insertLossCar(widget.notification.toString(), savedUid);
               ScaffoldMessenger.of(
                   context)
                   .showSnackBar(
@@ -122,11 +141,9 @@ class _ClaimsListState extends State<ClaimsList> {
           Expanded(
               child: FutureBuilder(
                   future: claimsApi()
-                      .get_claims_details(args.notficationId, args.companyCode),
+                      .get_claims_details(widget.notificationId.toString(), widget.companyCode.toString()),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      log("////////////////////");
-                      log("////////////////////");
                       return ListView.builder(
                         padding: EdgeInsets.all(10.0),
                         itemCount: snapshot.data.length,
@@ -135,10 +152,22 @@ class _ClaimsListState extends State<ClaimsList> {
                               onTap: () {
                                 if(snapshot.data[index].surveyDamagedLockedUser=="null"){
                                 _insertCarsSurvey(snapshot.data[index].carId, savedUid);
-                              //  Navigator.pushNamed(context, DataInputPersonalInformation.routeName,arguments:claimsListArgs(companyCode: args.companyCode,carId: snapshot.data[index].carId,vehicleNumber: snapshot.data[index].vehicleNumber));
+                                SQLHelper.deleteAll();
+                                _prefs!.remove(policyPrefKey);
+                                _prefs!.remove(vinPrefKey);
+                                _prefs!.remove(frontCarRegistrationPrefKey);
+                                _prefs!.remove(backCarRegistrationrefKey);
+                                _prefs!.remove(frontLicencePrefKey);
+                                _prefs!.remove(backLicencePrefKey);
+                                _prefs!.remove(pathsListPrefKey);
+                                _prefs!.remove("stringList");
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => DataInputPersonalInformation( companyCode: args.companyCode,carId: snapshot.data[index].carId,vehicleNumber: snapshot.data[index].vehicleNumber)
+                                    builder: (context) => DataInputPersonalInformation( companyCode: widget.companyCode.toString(),carId: snapshot.data[index].carId,vehicleNumber: snapshot.data[index].vehicleNumber,notification:widget.notification.toString(),notificationId:widget.notificationId.toString())
                                 ));
+
+
+
+
                                 }
                               },
                               child: Card(

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:e_survey/Models/claimsResponse.dart';
 import 'package:e_survey/args/SearrchSurveyArgs.dart';
 import 'package:e_survey/args/mySurveyArgs.dart';
+import 'package:e_survey/pages/claimsList.dart';
 import 'package:e_survey/service/mySurveyApi.dart';
 import 'package:e_survey/utility/app_url.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class _SurveyState extends State<Survey> {
                       GestureDetector(
                         onTap: (){
                           log( snapshot.data[index].notification);
-                          Navigator.pushNamed(context, "/ClaimsList",arguments: mySurveyArgs(snapshot.data[index].notificationId,snapshot.data[index].companyCode,snapshot.data[index].notification));
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>ClaimsList(snapshot.data[index].notification,snapshot.data[index].companyCode,snapshot.data[index].notificationId)));
                         },
                         child: Card(
                       child: Padding(

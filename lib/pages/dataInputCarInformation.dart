@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:e_survey/Models/body_type.dart';
 import 'package:e_survey/Models/brand.dart';
 import 'package:e_survey/Models/car_trade_mark.dart';
 import 'package:e_survey/Models/company.dart';
 import 'package:e_survey/Models/doors.dart';
 import 'package:e_survey/Models/vehicle_size.dart';
+import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/args/claimsListArgs.dart';
 import 'package:e_survey/args/personalInfoArgs.dart';
@@ -40,7 +42,11 @@ class DataInputCarInformation extends StatefulWidget {
   String? plateNumber;
   String? vehicleNumber;
   String? policyNumber;
-
+  String? fName;
+  String? fatherName;
+  String? lastName;
+  String? companyCode;
+  String? notification;
   static const routeName = '/DataInputCarInformation';
 
   DataInputCarInformation(
@@ -65,7 +71,14 @@ class DataInputCarInformation extends StatefulWidget {
       this.insurerCode,
       this.plateNumber,
       this.vehicleNumber,
-      this.policyNumber);
+      this.policyNumber,
+      this.fName,
+      this.fatherName,
+      this.lastName,
+     this.companyCode,
+      this.notification,
+
+      );
 
   DataInputCarInformation.n();
 
@@ -85,6 +98,11 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
 
   static const String userIDPrefKey = 'userId_pref';
   String savedUid = "";
+  String hintDoors="Select doors";
+  String hintBrand="Select brand";
+  String hinttradeMark="Select tadeMark";
+  String hintSize="Select vehicle size";
+  String hintBodyType="Select body Type ";
   late BodyType _bodyType = BodyType(code: '', description: '');
   late VehicleSize _vehicleSize = VehicleSize(code: '', description: '');
   late Doors _doors = Doors(code: '', description: '');
@@ -317,7 +335,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                         ? null
                                         : snapshot.data![
                                     snapshot.data!.indexOf(_brands)],
-                                    hint: new Text("Select Brand"),
+                                    hint: new Text(hintBrand.isEmpty?"empty brand":hintBrand ,style: TextStyle(color: hintBrand.isEmpty?Colors.red:Colors.black54),),
                                     // hint: Text(_gender.genderDescription.isEmpty?"select gender":_gender.genderDescription
                                     // ),
                                   );
@@ -373,7 +391,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                       ? null
                                       : snapshot.data![
                                   snapshot.data!.indexOf(_carTradeMark)],
-                                  hint: new Text("Select TradeMark"),
+                                  hint: new Text(hinttradeMark.isEmpty?"empty tardeMark":hinttradeMark ,style: TextStyle(color: hinttradeMark.isEmpty?Colors.red:Colors.black54),),
                                 );
                               });
                         }),
@@ -386,7 +404,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                           ? false
                           : true,
                       style: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
                       keyboardType: TextInputType.number,
                       controller: yearController,
@@ -396,17 +414,17 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                         labelText: 'Year',
                         isDense: true,
                         labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         hintText: "Enter Year",
                         hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         fillColor: Colors.grey[300],
                         border: InputBorder.none,
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 38, 97, 250)),
+                              color: Colors.blue),
                         ),
                         filled: true,
                       ),
@@ -420,23 +438,23 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                           : true,
                       controller: chasisController,
                       style: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
                       decoration: InputDecoration(
                         labelText: 'Chasis Number',
                         isDense: true,
                         labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         hintText: "Enter Chasis Number",
                         hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         fillColor: Colors.grey[300],
                         border: InputBorder.none,
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 38, 97, 250)),
+                              color: Colors.blue),
                         ),
                         filled: true,
                       ),
@@ -450,23 +468,23 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                           : true,
                       controller: plateController,
                       style: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
                       decoration: InputDecoration(
                         labelText: 'Plate Number',
                         isDense: true,
                         labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         hintText: "Enter Plate Number",
                         hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         fillColor: Colors.grey[300],
                         border: InputBorder.none,
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 38, 97, 250)),
+                              color: Colors.blue),
                         ),
                         filled: true,
                       ),
@@ -510,7 +528,8 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                             ? null
                                             : snapshot.data![
                                         snapshot.data!.indexOf(_vehicleSize)],
-                                        hint: new Text("Select Vehicle Size"),);
+                                          hint: new Text(hintSize.isEmpty?"empty vehicle size":hintSize ,style: TextStyle(color: hintSize.isEmpty?Colors.red:Colors.black54),),
+                                        );
                                     });
                               }),
 
@@ -557,7 +576,8 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                             ? null
                                             : snapshot.data![
                                         snapshot.data!.indexOf(_bodyType)],
-                                        hint: new Text("Select body type"),);
+                                        hint: new Text(hintBodyType.isEmpty?"empty body type":hintBodyType ,style: TextStyle(color: hintBodyType.isEmpty?Colors.red:Colors.black54),),
+                                      );
                                     });
                               }),
 
@@ -587,6 +607,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                       if (!snapshot.hasData)
                                         return CircularProgressIndicator();
                                       return DropdownButton<Doors>(
+
                                         items: snapshot.data!
                                             .map((door) =>
                                             DropdownMenuItem<Doors>(
@@ -603,7 +624,9 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                             ? null
                                             : snapshot.data![
                                         snapshot.data!.indexOf(_doors)],
-                                        hint: new Text("Select doors"),);
+                                        hint: new Text(hintDoors.isEmpty?"empty doors":hintDoors ,style: TextStyle(color: hintDoors.isEmpty?Colors.red:Colors.black54),),
+
+                                      );
                                     });
                               }),
 
@@ -625,23 +648,23 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                           : true,
                       controller: policyNumController,
                       style: TextStyle(
-                        color: Color.fromARGB(255, 38, 97, 250),
+                        color: Colors.blue,
                       ),
                       decoration: InputDecoration(
                         labelText: 'Policy Number',
                         isDense: true,
                         labelStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         hintText: "Policy Number",
                         hintStyle: TextStyle(
-                          color: Color.fromARGB(255, 38, 97, 250),
+                          color: Colors.blue,
                         ),
                         fillColor: Colors.grey[300],
                         border: InputBorder.none,
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255, 38, 97, 250)),
+                              color: Colors.blue),
                         ),
                         filled: true,
                       ),
@@ -660,41 +683,50 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                 ),
                                 onPressed: () async {
 
-                                  bool updated = await update(widget.carId.toString(),_brands.carBrandId,_carTradeMark.carTrademarkId,_vehicleSize.code,_bodyType.code,_doors.code,yearController.text,chasisController.text,plateController.text,policyNumController.text,savedUid);
+  bool updated = await update(
+      widget.carId.toString(),
+      _brands.carBrandId,
+      _carTradeMark.carTrademarkId,
+      _vehicleSize.code,
+      _bodyType.code,
+      _doors.code,
+      yearController.text,
+      chasisController.text,
+      plateController.text,
+      policyNumController.text,
+      savedUid);
 
-                                  if(updated) {
-                                    ScaffoldMessenger.of(
-                                        context)
-                                        .showSnackBar(
-                                      SnackBar(
-                                        backgroundColor:
-                                        Colors.blue,
-                                        content: Text("updated car info"),
+  if (updated) {
+    ScaffoldMessenger.of(
+        context)
+        .showSnackBar(
+      SnackBar(
+        backgroundColor:
+        Colors.blue,
+        content: Text("updated car info"),
 
-                                        //action: SnackBarAction(label: 'OK', onPressed: () {}),
-                                      ),
-                                    );
+        //action: SnackBarAction(label: 'OK', onPressed: () {}),
+      ),
+    );
 
-                                    Navigator.pop(context);
+    Navigator.pop(context);
+  } else {
+    ScaffoldMessenger.of(
+        context)
+        .showSnackBar(
+      SnackBar(
+        backgroundColor:
+        Colors.red,
+        content: Text("updated failed"),
 
-                                  }else{
-                                    ScaffoldMessenger.of(
-                                        context)
-                                        .showSnackBar(
-                                      SnackBar(
-                                        backgroundColor:
-                                        Colors.red,
-                                        content: Text("updated failed"),
+      ),
+    );
 
-                                      ),
-                                    );
-
-                                  }
-
+}
 
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    primary: Color.fromARGB(255, 38, 97, 250),
+                                    primary: Colors.blue,
                                     textStyle: TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.bold)),
@@ -717,8 +749,39 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                                   size: 30,
                                 ),
                                 onPressed: () async {
+    if(_doors.code.isEmpty){
+    this.setState(() {
+    hintDoors="";
+    });
 
-    bool updated = await update(widget.carId.toString(),_brands.carBrandId,_carTradeMark.carTrademarkId,_vehicleSize.code,_bodyType.code,_doors.code,yearController.text,chasisController.text,plateController.text,policyNumController.text,savedUid);
+    }
+
+    if(_carTradeMark.carTrademarkId.isEmpty){
+      this.setState(() {
+        hinttradeMark="";
+      });
+
+    }
+    if(_brands.carBrandId.isEmpty){
+      this.setState(() {
+        hintBrand="";
+      });
+
+    }
+    if(_bodyType.code.isEmpty){
+      this.setState(() {
+        hintBodyType="";
+      });
+
+    }
+    if(_vehicleSize.code.isEmpty){
+      this.setState(() {
+        hintSize="";
+      });
+
+    }
+    if(_doors.code.isNotEmpty&&_carTradeMark.carTrademarkId.isNotEmpty&&_brands.carBrandId.isNotEmpty&&_vehicleSize.code.isNotEmpty&&_bodyType.code.isNotEmpty) {
+  bool updated = await update(widget.carId.toString(),_brands.carBrandId,_carTradeMark.carTrademarkId,_vehicleSize.code,_bodyType.code,_doors.code,yearController.text,chasisController.text,plateController.text,policyNumController.text,savedUid);
 
     if(updated) {
       ScaffoldMessenger.of(
@@ -734,7 +797,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
 
     Navigator.push(context,
     MaterialPageRoute(builder: (context) => RequiredDocuments(),settings: RouteSettings(
-      arguments:CarImputArgs (carId: widget.carId.toString(),bodyType: _bodyType.code,doors: _doors.code)),),);
+      arguments:BigArgs (carId: widget.carId.toString(),bodyType: _bodyType.code,doors: _doors.code,fName: widget.fName.toString(),fatherName:widget.fatherName.toString(),lName: widget.lastName.toString(),brand: _brands.carBrandDescription,tradeMark: _carTradeMark.carTrademarkDescription,companyCode: widget.companyCode.toString(),notification: widget.notification.toString(),notificationId: widget.notificationId.toString())),),);
 
     }else{
       ScaffoldMessenger.of(
@@ -749,15 +812,17 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
       );
 
     }
+    }
 
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    primary: Color.fromARGB(255, 38, 97, 250),
+                                    primary: Colors.blue,
                                     textStyle: TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.bold)),
                               ),
-                            ))
+                            )
+                        )
                       ],
                     ),
                   ],

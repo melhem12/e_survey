@@ -27,6 +27,12 @@ class AppUrl {
   static const String carTrademarkList = baseUrl + '/auth/constant/carTrademarkList';
   static const String getAllDamagedParts = baseUrl + '/auth/esurveyController/getAllDamagedParts?';
   static const String getCarParts = baseUrl + '/auth/esurveyController/getCarParts?';
+  static const String addDamagePart = baseUrl + '/auth/esurveyController/insertDamagedParts';
+  static const String getPartMet = baseUrl + '/auth/esurveyController/getPartMet?';
+  static const String sendImage = baseUrl + '/auth/esurveyController/sendImage';
+
+  static const String finishSurvey = baseUrl + '/auth/esurveyController/finishSurvey';
+  static const String insertRequestStatus = baseUrl + '/auth/esurveyController/insertRequestStatus';
 
 
 }

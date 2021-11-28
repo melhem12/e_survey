@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
+import 'package:e_survey/pages/summery.dart';
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,9 +14,15 @@ class DamageDashboard extends StatefulWidget {
 }
 
 class _DamageDashboardState extends State<DamageDashboard> {
+
   @override
   Widget build(BuildContext context) {
-    final args =ModalRoute.of(context)!.settings.arguments as CarImputArgs;
+
+    final args =ModalRoute.of(context)!.settings.arguments as BigArgs;
+    log("nnnnnnnnnnn") ;
+    log(args.carId);
+    log("nnnnnnnnnnn") ;
+
     return   Scaffold(
 
       body:
@@ -51,32 +61,79 @@ class _DamageDashboardState extends State<DamageDashboard> {
                   ],
                 ),
               ),
+
+
+
+
+
+
+
               Expanded(
-                  flex: 1,
-                  child:
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
+                flex: 1,
+                child:
 
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 30,
-                      ),
 
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          child: ElevatedButton(
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: () {
 
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          textStyle: TextStyle(
-                              fontSize: 30,
-                              fontWeight:
-                              FontWeight.bold)),
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.blue,
+                                textStyle: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight:
+                                    FontWeight.bold)),
+                          ),
+                        )),
+                    SizedBox(
+                      width: 10,
                     ),
-                  )
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          child: ElevatedButton(
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: ()  {
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => Summery(args.carId,args.fName, args.fatherName,args.lName,args.brand,args.tradeMark,args.companyCode,args.notification,args.notificationId))
+                              );
+
+                            }
+                            ,
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.blue,
+                                textStyle: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight:
+                                    FontWeight.bold)),
+                          ),
+                        ))
+
+                  ],
+                ),
               )
+
+
+
 
             ]
 

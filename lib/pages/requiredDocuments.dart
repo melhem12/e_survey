@@ -1,10 +1,15 @@
 
+import 'dart:developer';
+
+import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/pages/dataInputCarInformation.dart';
+import 'package:e_survey/utility/LifecycleWatcherState.dart';
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'damage_dashboard.dart';
 class RequiredDocuments extends StatefulWidget {
   const RequiredDocuments({Key? key}) : super(key: key);
@@ -13,12 +18,104 @@ class RequiredDocuments extends StatefulWidget {
   _RequiredDocumentsState createState() => _RequiredDocumentsState();
 }
 
-class _RequiredDocumentsState extends State<RequiredDocuments> {
+class _RequiredDocumentsState extends LifecycleWatcherState<RequiredDocuments>  {
+  static const String policyPrefKey = 'policy_pref';
+  String savedPolicy ="";
+  static const String vinPrefKey = 'vin';
+  String savedVin ="";
+  static const String backLicencePrefKey = 'back_licence_pref';
+  SharedPreferences? _prefs;
+  String savedFrontLicense ="";
+  static const String frontLicencePrefKey = 'front_licence_pref';
+  String savedBacktLicense ="";
+  static const String userIDPrefKey = 'userId_pref';
+  String userId="";
+  static const String backCarRegistrationrefKey = 'back_CarRegistration_pref';
+  String savedFrontCarRegistration ="";
+  static const String frontCarRegistrationPrefKey = 'front_CarRegistration_pref';
+  String savedBackCarRegistration="";
+  @override
+  void initState() {
+
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() =>
+      this._prefs=prefs);
+      _loadImageDir();
+
+    });
+
+    super.initState();
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
-    final args =ModalRoute.of(context)!.settings.arguments as CarImputArgs;
-    return   Scaffold(
+    var drawerHeader = UserAccountsDrawerHeader(
+      accountName: Text(userId),
+      accountEmail: Text(userId),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.white,
+        child: Icon(Icons.person ,size: 65,color: Colors.blue,),
+      ),
+      // otherAccountsPictures: <Widget>[
+      //   CircleAvatar(
+      //     backgroundColor: Colors.yellow,
+      //     child: Text('A'),
+      //   ),
+      //   CircleAvatar(
+      //     backgroundColor: Colors.red,
+      //     child: Text('B'),
+      //   )
+      // ],
+    );
+    final drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        ListTile(
+          title:  Row(
+            children: <Widget>[
+              SizedBox(width: 5,),
+              Icon(Icons.home),
+              Text('Home'),
 
+            ],
+          ),
+
+          onTap: () => Navigator.of(context).pushNamed('/home'),
+
+        ),
+        ListTile(
+            title:  Row(
+              children: <Widget>[
+                SizedBox(width: 5,),
+                Icon(Icons.exit_to_app),
+                SizedBox(width: 5,),
+                Text('Logout'),
+
+              ],
+            ),
+
+            onTap: () async => {
+              await   _prefs!.clear(),
+              Navigator.of(context).pushNamed('/'),
+
+            }
+        ),
+
+      ],
+    );
+
+    final args =ModalRoute.of(context)!.settings.arguments as BigArgs;
+    log("nnnnnnnnnnn") ;
+    log(args.carId);
+    log("nnnnnnnnnnn") ;
+    return   Scaffold(
+      drawer: Drawer(
+        child: drawerItems,
+      ),
       body:
       Container(
           height: double.infinity,
@@ -46,10 +143,10 @@ class _RequiredDocumentsState extends State<RequiredDocuments> {
                   children: <Widget>[
 
                     // Text(""),
-                    makeDashboardItem2("Driving License ", Icons.drive_eta,"/DriverLicenceDashboard",context,'','',''),
-                    makeDashboardItem2("Car Registration", Icons.car_rental,"",context,'','',''),
-                    makeDashboardItem2("Vin number", Icons.car_rental,"",context,'','',''),
-                    makeDashboardItem2("policy", Icons.task,"",context,'','',''),
+                    makeDashboardItem2("Driving License ", savedFrontLicense.isNotEmpty&&savedBacktLicense.isNotEmpty?Icons.check:Icons.drive_eta ,"/DriverLicenceDashboard",context,'','',''),
+                    makeDashboardItem2("Car Registration", savedFrontCarRegistration.isNotEmpty&&savedBackCarRegistration.isNotEmpty?Icons.check:Icons.car_rental,"/carRegistration",context,'','',''),
+                    makeDashboardItem2("Vin number", savedVin.isNotEmpty?Icons.check:Icons.car_rental,"/vin",context,'','',''),
+                    makeDashboardItem2("policy", savedPolicy.isNotEmpty?Icons.check:Icons.task,"/policy",context,'','',''),
 
                     //makeDashboardItem("", Icons.task,"/",context),
 
@@ -114,7 +211,7 @@ SizedBox(
                           onPressed: ()  {
                             Navigator.push(context,
                             MaterialPageRoute(builder: (context) => DamageDashboard(),settings: RouteSettings(
-                                arguments:CarImputArgs (carId: args.carId,bodyType: args.bodyType,doors: args.doors),
+                                arguments:BigArgs (carId: args.carId,bodyType: args.bodyType,doors: args.doors,fName: args.fName,fatherName:args.fatherName,lName:args.lName,brand: args.brand,tradeMark: args.tradeMark,companyCode: args.companyCode,notification: args.notification,notificationId: args.notificationId),
                                 )),
                             );
 
@@ -145,4 +242,36 @@ SizedBox(
 
     );
   }
+  void _loadImageDir(){
+    setState(() {
+      this.savedBacktLicense=this._prefs?.getString(backLicencePrefKey)??"";
+      this.savedFrontLicense=this._prefs?.getString(frontLicencePrefKey)??"";
+      this.savedBackCarRegistration=this._prefs?.getString(backCarRegistrationrefKey)??"";
+      this.savedFrontCarRegistration=this._prefs?.getString(frontCarRegistrationPrefKey)??"";
+      this.userId=this._prefs?.getString(userIDPrefKey)??"";
+      this.savedVin=this._prefs?.getString(vinPrefKey)??"";
+      this.savedPolicy=this._prefs?.getString(policyPrefKey)??"";
+    });
+  }
+
+  @override
+  void onDetached() {
+    // TODO: implement onDetached
+  }
+
+  @override
+  void onInactive() {
+    // TODO: implement onInactive
+  }
+
+  @override
+  void onPaused() {
+    // TODO: implement onPaused
+  }
+
+  @override
+  void onResumed() {
+    _loadImageDir();
+  }
+
 }

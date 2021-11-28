@@ -1,6 +1,13 @@
 import 'package:e_survey/args/CarImputArgs.dart';
+import 'package:e_survey/pages/BackCarRegistration.dart';
+import 'package:e_survey/pages/BackLicenseImage.dart';
+import 'package:e_survey/pages/CarRegistrationDashboard.dart';
 import 'package:e_survey/pages/DamagedPictures.dart';
 import 'package:e_survey/pages/DriverLicenceDashboard.dart';
+import 'package:e_survey/pages/FrontCarRegistration.dart';
+import 'package:e_survey/pages/Policy.dart';
+import 'package:e_survey/pages/RegistrationDashboard.dart';
+import 'package:e_survey/pages/Vin.dart';
 import 'package:e_survey/pages/driverLicenseImage.dart';
 import 'package:e_survey/pages/parts.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +74,27 @@ Card makeDashboardItem2(String title, IconData icon, String path,BuildContext co
             Navigator.push(context,MaterialPageRoute(builder: (context)=>DriverLicenceImage()));
           }
           if(
+          path=='/BackDriverLicenceImage'
+          ){
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>BackLicenseImage()));
+          }
+          if(
+          path=='/FrontCarRegistrationImage'
+          ){
+          Navigator.push(context,MaterialPageRoute(builder: (context)=>FrontCarRegistration()));
+          }
+          if(
+          path=='/BackCarRegistrationImage'
+          ){
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>BackCarRegistration()));
+          }
+          if(
+          path=='/carRegistration'
+          ){
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>RegistrationDashboard()));
+          }
+
+          if(
           path=='/damagePictures'
           ){
             Navigator.push(context,MaterialPageRoute(builder: (context)=>DamagedPictures()));
@@ -74,8 +102,17 @@ Card makeDashboardItem2(String title, IconData icon, String path,BuildContext co
           if(
           path=='/parts'
           ){
-            Navigator.push(context,MaterialPageRoute(builder: (context)=>parts(),settings: RouteSettings(
-            arguments:CarImputArgs (carId: carId,bodyType: var1,doors: var2)),));
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>parts(var1, var2,carId)));
+          }
+          if(
+          path=='/vin'
+          ){
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>Vin()));
+          }
+          if(
+          path=='/policy'
+          ){
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>Policy()));
           }
           },
           child: Column(

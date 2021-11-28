@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:e_survey/Models/body_type.dart';
 import 'package:e_survey/Models/brand.dart';
 import 'package:e_survey/Models/car_trade_mark.dart';
@@ -205,6 +207,7 @@ class ConstantsApi{
             description: i['description'],
           ));
         }
+        log(descriptions[0].description);
         //    print(companies);
 
       }

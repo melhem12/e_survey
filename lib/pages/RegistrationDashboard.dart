@@ -2,19 +2,20 @@ import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class DriverLicenceDashboard extends StatefulWidget {
-  const DriverLicenceDashboard({Key? key}) : super(key: key);
+class RegistrationDashboard extends StatefulWidget {
+  const RegistrationDashboard({Key? key}) : super(key: key);
 
   @override
-  _DriverLicenceDashboardState createState() => _DriverLicenceDashboardState();
+  _RegistrationDashboardState createState() => _RegistrationDashboardState();
 }
 
-class _DriverLicenceDashboardState extends State<DriverLicenceDashboard> {
-  static const String backLicencePrefKey = 'back_licence_pref';
+class _RegistrationDashboardState extends State<RegistrationDashboard> {
+  static const String backCarRegistrationrefKey = 'back_CarRegistration_pref';
   SharedPreferences? _prefs;
-  String savedFrontLicense ="";
-  static const String frontLicencePrefKey = 'front_licence_pref';
-  String savedBacktLicense ="";
+  String savedFrontCarRegistration ="";
+  static const String frontCarRegistrationPrefKey = 'front_CarRegistration_pref';
+  String savedBackCarRegistration="";
+
   @override
   void initState() {
 
@@ -45,7 +46,7 @@ class _DriverLicenceDashboardState extends State<DriverLicenceDashboard> {
             children: <Widget>[
               Expanded(
 
-                flex: 1, child:   Text("Documents required",
+                flex: 1, child:   Text("Car Registration",
                   style: GoogleFonts.pacifico(
                       fontWeight: FontWeight.bold, fontSize: 40, color: Colors.blue)),
               ),
@@ -58,8 +59,8 @@ class _DriverLicenceDashboardState extends State<DriverLicenceDashboard> {
                   children: <Widget>[
 
                     // Text(""),
-                    makeDashboardItem2("Front Side Of Driver License", savedFrontLicense.isNotEmpty?Icons.check:Icons.camera,"/DriverLicenceImage",context,'','',''),
-                    makeDashboardItem2("Back Side Of Driver License",savedBacktLicense.isNotEmpty?Icons.check:Icons.camera,"/BackDriverLicenceImage",context,'','',''),
+                    makeDashboardItem2("Front Side Of Car Registration", savedFrontCarRegistration.isNotEmpty?Icons.check:Icons.camera,"/FrontCarRegistrationImage",context,'','',''),
+                    makeDashboardItem2("Back Side Of Car Registration",savedBackCarRegistration.isNotEmpty?Icons.check:Icons.camera,"/BackCarRegistrationImage",context,'','',''),
 
 
                     //makeDashboardItem("", Icons.task,"/",context),
@@ -128,8 +129,8 @@ class _DriverLicenceDashboardState extends State<DriverLicenceDashboard> {
   }
   void _loadImageDir(){
     setState(() {
-      this.savedBacktLicense=this._prefs?.getString(backLicencePrefKey)??"";
-      this.savedFrontLicense=this._prefs?.getString(frontLicencePrefKey)??"";
+      this.savedBackCarRegistration=this._prefs?.getString(backCarRegistrationrefKey)??"";
+      this.savedFrontCarRegistration=this._prefs?.getString(frontCarRegistrationPrefKey)??"";
 
     });
   }

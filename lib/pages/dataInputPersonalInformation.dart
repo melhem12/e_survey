@@ -15,13 +15,17 @@ class DataInputPersonalInformation extends StatefulWidget {
   final String companyCode;
   final String carId;
   final String vehicleNumber;
-
+  final String notification;
+  final String notificationId;
   // const DataInputPersonalInformation({Key? key}) : super(key: key);
   const DataInputPersonalInformation(
       {Key? key,
       required this.companyCode,
       required this.carId,
-      required this.vehicleNumber})
+      required this.vehicleNumber,
+        required this.notification,
+
+        required this.notificationId})
       : super(key: key);
   static const routeName = '/DataInputPersonalInformation';
 
@@ -42,7 +46,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
   TextEditingController _textEditingLicenseDateController =
       TextEditingController();
   SharedPreferences? _prefs;
-
+  final _formKey = GlobalKey<FormState>();
   DateTime? _selectedLicenseExpiryDate = DateTime.now();
   TextEditingController _textEditingLicenseExpiryDateController =
       TextEditingController();
@@ -129,7 +133,9 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Column(
+                          child: Form(
+                              key: _formKey,
+                              child: Column(
                               mainAxisSize: MainAxisSize.max,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -145,13 +151,24 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                 SizedBox(
                                   height: height,
                                 ),
-                                TextField(
+                                TextFormField(
+
+
+
+
                                   enabled: widget.vehicleNumber == "0"
                                       ? false
                                       : true,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Enter First Name';
+                                    }
+                                    return null;
+                                  },
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
+
                                   controller: firstNameController
                                     ..text = snapshot.data.carOwnerFirstName ==
                                                 "null" ||
@@ -163,31 +180,48 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'First Name',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
+
+
+
+
                                     ),
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.red)),
+
                                     hintText: "Enter First Name",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     border: InputBorder.none,
                                     fillColor: Colors.grey[300],
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
+
+
+
+
                                 ),
                                 SizedBox(
                                   height: height,
                                 ),
-                                TextField(
+                                TextFormField(
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Enter father name';
+                                    }
+                                    return null;
+                                  },
                                   enabled: widget.vehicleNumber == "0"
                                       ? false
                                       : true,
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   controller: fatherNameController
                                     ..text = snapshot.data.carOwnerFatherName ==
@@ -201,18 +235,21 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     isDense: true,
                                     border: InputBorder.none,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter Father Name",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
+
                                     //  border: InputBorder.none,
                                     fillColor: Colors.grey[300],
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.red)),
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -220,12 +257,18 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                 SizedBox(
                                   height: height,
                                 ),
-                                TextField(
+                                TextFormField(
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Enter Last name';
+                                    }
+                                    return null;
+                                  },
                                   enabled: widget.vehicleNumber == "0"
                                       ? false
                                       : true,
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   controller: lastNameController
                                     ..text = snapshot.data.carOwnerFamilyName ==
@@ -238,18 +281,20 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'Last Name',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter Last Name",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.red)),
                                     fillColor: Colors.grey[300],
                                     border: InputBorder.none,
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -262,7 +307,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                       ? false
                                       : true,
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   controller: phoneNumberController
                                     ..text = snapshot.data.phoneNumber ==
@@ -274,18 +319,18 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'Phone Number',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter Phone Number",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     border: InputBorder.none,
                                     fillColor: Colors.grey[300],
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -359,7 +404,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                       ? false
                                       : true,
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   focusNode: AlwaysDisabledFocusNode(),
                                   controller: _textEditingdobController,
@@ -371,11 +416,11 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'Date of Birth',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter Date of Birth",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     suffixIcon:
                                         Icon(Icons.calendar_today_outlined),
@@ -384,7 +429,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -409,7 +454,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                       ? false
                                       : true,
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   controller: licenseNumber
                                     ..text = snapshot.data.licenseNumber ==
@@ -421,18 +466,18 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'License Number',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter License Number",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     border: InputBorder.none,
                                     fillColor: Colors.grey[300],
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -452,7 +497,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                         ? ''
                                         : snapshot.data.licenseDate,
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   onTap: () {
                                     print("asdasdasd");
@@ -467,18 +512,18 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'License Date',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter License Date",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     fillColor: Colors.grey[300],
                                     border: InputBorder.none,
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -506,8 +551,9 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                         _textEditingLicenseExpiryDateController,
                                         _selectedLicenseExpiryDate!);
                                   },
+
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 97, 250),
+                                    color: Colors.blue,
                                   ),
                                   decoration: InputDecoration(
                                     suffixIcon:
@@ -515,18 +561,18 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     labelText: 'License Expiry Date',
                                     isDense: true,
                                     labelStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     hintText: "Enter License Expiry Date",
                                     hintStyle: TextStyle(
-                                      color: Color.fromARGB(255, 38, 97, 250),
+                                      color: Colors.blue,
                                     ),
                                     border: InputBorder.none,
                                     fillColor: Colors.grey[300],
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
-                                              Color.fromARGB(255, 38, 97, 250)),
+                                              Colors.blue),
                                     ),
                                     filled: true,
                                   ),
@@ -588,8 +634,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
 
                                             },
                                             style: ElevatedButton.styleFrom(
-                                                primary: Color.fromARGB(
-                                                    255, 38, 97, 250),
+                                                primary: Colors.blue,
                                                 textStyle: TextStyle(
                                                     fontSize: 30,
                                                     fontWeight:
@@ -612,118 +657,82 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                               size: 30,
                                             ),
                                             onPressed: () async {
-                                           bool updated = await update(widget.carId,firstNameController.text,
-                                                  lastNameController.text,fatherNameController.text,
-                                                  _textEditingLicenseDateController.text,
-                                                  _textEditingLicenseExpiryDateController.text,phoneNumberController.text,
-                                                  licenseNumber.text, savedUid,_gender.genderId);
+                                              if (_formKey.currentState!.validate()) {
+                                                bool updated = await update(widget.carId,firstNameController.text,
+                                                    lastNameController.text,fatherNameController.text,
+                                                    _textEditingLicenseDateController.text,
+                                                    _textEditingLicenseExpiryDateController.text,phoneNumberController.text,
+                                                    licenseNumber.text, savedUid,_gender.genderId);
 
-                                              if(updated)  {
-                                                ScaffoldMessenger.of(
-                                                    context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    backgroundColor:
-                                                    Colors.blue,
-                                                    content: Text("updated personaal info"),
+                                                if(updated)  {
+                                                  ScaffoldMessenger.of(
+                                                      context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      backgroundColor:
+                                                      Colors.blue,
+                                                      content: Text("updated personaal info"),
 
-                                                    //action: SnackBarAction(label: 'OK', onPressed: () {}),
-                                                  ),
-                                                );
-                                                Navigator.of(context).push(MaterialPageRoute(
-                                                    builder: (context) => DataInputCarInformation( snapshot.data
-                                                                .carTrademarkId,
-                                                            snapshot.data.doors,
-                                                            snapshot.data.bodyType,
-                                                            snapshot
-                                                                .data.vehicleSize,
-                                                            snapshot.data.carId,
-                                                            snapshot.data
-                                                                .notificationId,
-                                                            snapshot.data
-                                                                .vehicleOwnerName,
-                                                            snapshot.data
-                                                                .carOwnerMaidenName,
-                                                            snapshot.data
-                                                                .accidentLocation,
-                                                            snapshot.data.shapeID,
-                                                            snapshot.data
-                                                                .brandTradeMark,
-                                                            snapshot.data.pasNumber,
-                                                            snapshot
-                                                                .data.reportedDate,
-                                                            snapshot.data.modelYear,
-                                                            snapshot.data.brandId,
-                                                            snapshot
-                                                                .data.claimStatus,
-                                                            snapshot
-                                                                .data.claimNumber,
-                                                            snapshot
-                                                                .data.chasisNumber,
-                                                            snapshot
-                                                                .data.insurerCode,
-                                                            snapshot
-                                                                .data.plateNumber,
-                                                            snapshot
-                                                                .data.vehicleNumber,
-                                                            snapshot.data
-                                                                .policyNumber)
-                                                                 ));
+                                                      //action: SnackBarAction(label: 'OK', onPressed: () {}),
+                                                    ),
+                                                  );
+                                                  Navigator.of(context).push(MaterialPageRoute(
+                                                      builder: (context) => DataInputCarInformation( snapshot.data
+                                                          .carTrademarkId,
+                                                          snapshot.data.doors,
+                                                          snapshot.data.bodyType,
+                                                          snapshot
+                                                              .data.vehicleSize,
+                                                          snapshot.data.carId,
+                                                          snapshot.data
+                                                              .notificationId,
+                                                          snapshot.data
+                                                              .vehicleOwnerName,
+                                                          snapshot.data
+                                                              .carOwnerMaidenName,
+                                                          snapshot.data
+                                                              .accidentLocation,
+                                                          snapshot.data.shapeID,
+                                                          snapshot.data
+                                                              .brandTradeMark,
+                                                          snapshot.data.pasNumber,
+                                                          snapshot
+                                                              .data.reportedDate,
+                                                          snapshot.data.modelYear,
+                                                          snapshot.data.brandId,
+                                                          snapshot
+                                                              .data.claimStatus,
+                                                          snapshot
+                                                              .data.claimNumber,
+                                                          snapshot
+                                                              .data.chasisNumber,
+                                                          snapshot
+                                                              .data.insurerCode,
+                                                          snapshot
+                                                              .data.plateNumber,
+                                                          snapshot
+                                                              .data.vehicleNumber,
+                                                          snapshot.data
+                                                              .policyNumber,firstNameController.text,fatherNameController.text,lastNameController.text,widget.companyCode.toString(),widget.notification.toString())
+                                                  ));
 
-                                                // Navigator.pushNamed(context,
-                                                //   '/DataInputCarInformation'
-                                                //  ,
-                                                //     arguments: personalInfoArgs(
-                                                //         snapshot.data
-                                                //             .carTrademarkId,
-                                                //         snapshot.data.doors,
-                                                //         snapshot.data.bodyType,
-                                                //         snapshot
-                                                //             .data.vehicleSize,
-                                                //         snapshot.data.carId,
-                                                //         snapshot.data
-                                                //             .notificationId,
-                                                //         snapshot.data
-                                                //             .vehicleOwnerName,
-                                                //         snapshot.data
-                                                //             .carOwnerMaidenName,
-                                                //         snapshot.data
-                                                //             .accidentLocation,
-                                                //         snapshot.data.shapeID,
-                                                //         snapshot.data
-                                                //             .brandTradeMark,
-                                                //         snapshot.data.pasNumber,
-                                                //         snapshot
-                                                //             .data.reportedDate,
-                                                //         snapshot.data.modelYear,
-                                                //         snapshot.data.brandId,
-                                                //         snapshot
-                                                //             .data.claimStatus,
-                                                //         snapshot
-                                                //             .data.claimNumber,
-                                                //         snapshot
-                                                //             .data.chasisNumber,
-                                                //         snapshot
-                                                //             .data.insurerCode,
-                                                //         snapshot
-                                                //             .data.plateNumber,
-                                                //         snapshot
-                                                //             .data.vehicleNumber,
-                                                //         snapshot.data
-                                                //             .policyNumber)
-                                                //             );
-                                              }
-                                              else{
-                                                ScaffoldMessenger.of(
-                                                    context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    backgroundColor:
-                                                    Colors.red,
-                                                    content: Text("updated failed"),
 
-                                                  ),
-                                                );
+                                                }
+                                                else{
+                                                  ScaffoldMessenger.of(
+                                                      context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      backgroundColor:
+                                                      Colors.red,
+                                                      content: Text("updated failed"),
+
+                                                    ),
+                                                  );
+                                                }
+
+                                              } else {
+                                                print("not ok");
                                               }
 
 
@@ -735,8 +744,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
 
                                             },
                                             style: ElevatedButton.styleFrom(
-                                                primary: Color.fromARGB(
-                                                    255, 38, 97, 250),
+                                                primary: Colors.blue,
                                                 textStyle: TextStyle(
                                                     fontSize: 30,
                                                     fontWeight:
@@ -747,7 +755,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                   ],
                                 ),
                               ]),
-                        ),
+                        ),),
                       );
                     } else if (snapshot.hasError) {
                       return Icon(Icons.error_outline);
@@ -772,10 +780,10 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
           return Theme(
             data: ThemeData.dark().copyWith(
               colorScheme: ColorScheme.light(
-                primary: Color.fromARGB(255, 38, 97, 250),
-                onPrimary: Color.fromARGB(255, 38, 97, 250),
+                primary: Colors.blue,
+                onPrimary: Colors.blue,
                 surface: Colors.blueGrey,
-                onSurface: Color.fromARGB(255, 38, 97, 250),
+                onSurface: Colors.blue,
               ),
               dialogBackgroundColor: Colors.white,
             ),
@@ -802,7 +810,13 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
     });
   }
 
+
 }
+bool checkLicenseDate(){
+
+  return true;
+}
+
 Future<bool> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId,String gender ) async {
 bool updated  = await updatingInformationService().update( carId, carOwnerFirstName, carOwnerFamilyName, carOwnerFatherName, licenseDate, licenseExpiryDate, phoneNumber, licenseNumber, userId, gender);
 return updated;
@@ -812,3 +826,4 @@ class AlwaysDisabledFocusNode extends FocusNode {
   @override
   bool get hasFocus => false;
 }
+

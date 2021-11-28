@@ -30,10 +30,10 @@ String savedUid ="";
     SharedPreferences.getInstance().then((prefs) {
       setState(() =>
       this._prefs=prefs);
-_loadUserId();
-      if(savedUid.isNotEmpty){
-        Navigator.pushNamed(context, "/home");
-      }
+// _loadUserId();
+//       if(savedUid.isNotEmpty){
+//         Navigator.pushNamed(context, "/home");
+//       }
     });
 
     super.initState();
@@ -104,10 +104,13 @@ _loadUserId();
                     onChanged: (value) {
                       user.userId = value;
                     },
-                    // validator: (value) {
-                    //   if (value!.isEmpty) {
-                    //     return 'Enter something';
-                    //   } else if (RegExp(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Enter userId';
+                      }
+                      return null;
+                    },
+                      //else if (RegExp(
                     //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                     //       .hasMatch(value)) {
                     //     return null;
@@ -144,7 +147,7 @@ _loadUserId();
                     },
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Enter something';
+                        return 'Enter password';
                       }
                       return null;
                     },
