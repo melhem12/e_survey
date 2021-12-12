@@ -84,9 +84,36 @@ class _FrontCarRegistrationState extends State<FrontCarRegistration> {
                     )
                     ),
 
-                    Expanded(
-                        flex: 1,
-                        child: Container(
+                    // Expanded(
+                    //     flex: 1,
+                    //     child: Container(
+                    //       child: ElevatedButton(
+                    //
+                    //         child: Icon(
+                    //           Icons.arrow_back,
+                    //           color: Colors.white,
+                    //           size: 30,
+                    //         ),
+                    //
+                    //         onPressed: () {
+                    //           Navigator.pop(context);
+                    //         },
+                    //         style: ElevatedButton.styleFrom(
+                    //             primary: Colors.blue,
+                    //
+                    //             textStyle: TextStyle(
+                    //                 fontSize: 30,
+                    //                 fontWeight:
+                    //                 FontWeight.bold)),
+                    //
+                    //       ),
+                    //     )
+                    // )
+                    Container(
+                        height: 30,
+                        child:
+                        Container(
+                          width: double.infinity,
                           child: ElevatedButton(
 
                             child: Icon(
@@ -98,17 +125,16 @@ class _FrontCarRegistrationState extends State<FrontCarRegistration> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
+
                             style: ElevatedButton.styleFrom(
                                 primary: Colors.blue,
-
                                 textStyle: TextStyle(
                                     fontSize: 30,
                                     fontWeight:
                                     FontWeight.bold)),
-
                           ),
                         )
-                    )
+                    ),
                   ]))
 
 

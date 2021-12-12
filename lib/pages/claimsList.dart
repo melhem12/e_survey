@@ -53,9 +53,16 @@ class _ClaimsListState extends State<ClaimsList> {
   Widget build(BuildContext context) {
    // final args = ModalRoute.of(context)!.settings.arguments as mySurveyArgs;
 
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+    return
+
+
+      Scaffold(
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 50),
+        child: FloatingActionButton(
+
+
+          onPressed: () {
 
 
 
@@ -69,54 +76,54 @@ class _ClaimsListState extends State<ClaimsList> {
 
 
 
-          showDialog<String>(
-            context: context,
-            builder: (BuildContext
-            context) =>
-                AlertDialog(
-                  title: const Text(
-                      'Add Tp'),
-                  content: const Text(
-                    'Are you sure you want to Add  Tp',
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext
+              context) =>
+                  AlertDialog(
+                    title: const Text(
+                        'Add Tp'),
+                    content: const Text(
+                      'Are you sure you want to Add  Tp',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pop(
+                                context,
+                                'Cancel'),
+                        child: const Text(
+                            'Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pop(
+                                context,
+                                'yes'),
+                        child: const Text(
+                            'yes'),
+                      ),
+                    ],
                   ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pop(
-                              context,
-                              'Cancel'),
-                      child: const Text(
-                          'Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pop(
-                              context,
-                              'yes'),
-                      child: const Text(
-                          'yes'),
-                    ),
-                  ],
-                ),
-          ).then((returnVal) {
-            if (returnVal == "yes") {
+            ).then((returnVal) {
+              if (returnVal == "yes") {
 
 
 
-          _insertLossCar(widget.notification.toString(), savedUid);
-              ScaffoldMessenger.of(
-                  context)
-                  .showSnackBar(
-                SnackBar(
-                  backgroundColor:
-                  Colors.blue,
-                  content: Text("added"),
+            _insertLossCar(widget.notification.toString(), savedUid);
+                ScaffoldMessenger.of(
+                    context)
+                    .showSnackBar(
+                  SnackBar(
+                    backgroundColor:
+                    Colors.blue,
+                    content: Text("added"),
 
-                  //action: SnackBarAction(label: 'OK', onPressed: () {}),
-                ),
-              );
-            }
-          });
+                    //action: SnackBarAction(label: 'OK', onPressed: () {}),
+                  ),
+                );
+              }
+            });
 
 
 
@@ -129,9 +136,10 @@ class _ClaimsListState extends State<ClaimsList> {
 
 
 
-        },
-        child: const Icon(Icons.add),
-        backgroundColor: Colors.blue,
+          },
+          child: const Icon(Icons.add),
+          backgroundColor: Colors.blue,
+        ),
       ),
       appBar: AppBar(
         title: Text("Claims List"),
@@ -161,12 +169,10 @@ class _ClaimsListState extends State<ClaimsList> {
                                 _prefs!.remove(backLicencePrefKey);
                                 _prefs!.remove(pathsListPrefKey);
                                 _prefs!.remove("stringList");
+
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => DataInputPersonalInformation( companyCode: widget.companyCode.toString(),carId: snapshot.data[index].carId,vehicleNumber: snapshot.data[index].vehicleNumber,notification:widget.notification.toString(),notificationId:widget.notificationId.toString())
                                 ));
-
-
-
 
                                 }
                               },
@@ -235,10 +241,6 @@ class _ClaimsListState extends State<ClaimsList> {
                                                   icon:
                                                       const Icon(Icons.delete),
                                                   onPressed: () {
-
-
-
-
                                                     showDialog<String>(
                                                       context: context,
                                                       builder: (BuildContext
@@ -324,7 +326,11 @@ class _ClaimsListState extends State<ClaimsList> {
                     } else if (snapshot.hasError) {
                       return Icon(Icons.error_outline);
                     } else {
-                      return CircularProgressIndicator();
+                      return
+                        Center(
+                          child: CircularProgressIndicator()
+                          ,
+                        );
                     }
                   })),
         ],

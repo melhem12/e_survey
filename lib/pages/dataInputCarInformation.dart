@@ -151,11 +151,11 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
           ? ''
           : widget.plateNumber.toString();
     chasisController
-      ..text = (widget.chasisNumber ==
+      ..text = widget.chasisNumber.toString()==
           "null" ||
-          widget.chasisNumber!.isEmpty
+          widget.chasisNumber.toString().isEmpty
           ? ''
-          : widget.chasisNumber)!;
+          : widget.chasisNumber.toString();
     if (widget.brandId!.isNotEmpty || widget.brandId != "null") {
       getBrandObject();
       futureTrademark =
@@ -255,13 +255,54 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
     //   final args = ModalRoute.of(context)!.settings.arguments as personalInfoArgs;
 
 
-    return MaterialApp(
-      title: 'Car info',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
+    return
+      WillPopScope (
+          onWillPop: (
+
+              ) async {
+            bool updated = await update(
+                widget.carId.toString(),
+                _brands.carBrandId,
+                _carTradeMark.carTrademarkId,
+                _vehicleSize.code,
+                _bodyType.code,
+                _doors.code,
+                yearController.text,
+                chasisController.text,
+                plateController.text,
+                policyNumController.text,
+                savedUid);
+
+            if (updated) {
+              ScaffoldMessenger.of(
+                  context)
+                  .showSnackBar(
+                SnackBar(
+                  backgroundColor:
+                  Colors.blue,
+                  content: Text("updated car info"),
+
+                  //action: SnackBarAction(label: 'OK', onPressed: () {}),
+                ),
+              );
+              return true;
+
+            } else {
+              ScaffoldMessenger.of(
+                  context)
+                  .showSnackBar(
+                SnackBar(
+                  backgroundColor:
+                  Colors.red,
+                  content: Text("updated failed"),
+
+                ),
+              );
+              return false;
+            }
+
+          },
+      child: Scaffold(
         appBar: AppBar(title: Text('Car Info')),
         backgroundColor: Colors.white,
         // appBar: AppBar(title: Text("asdsadasdas")),
@@ -832,6 +873,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
           ),
         ),
       ),
+
     );
   }
 

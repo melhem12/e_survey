@@ -48,8 +48,8 @@ class PartMetApi{
 
 
   Future<List<CarParts>> get_Car_Parts(String partSubgroup,String doors,String bodyType,String direction,String description ) async {
-    carparts=[];
 
+    carparts=[];
     var response = await  http.get(Uri.parse(AppUrl.getCarParts+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&direction="+direction+"&description="+description)).timeout(Duration(seconds: 100));
     if (response.statusCode == 200) {
       final extractedData = json.decode(response.body)['carPartBeanList'];

@@ -59,13 +59,38 @@ mainAxisAlignment: MainAxisAlignment.start,
 
       // Text(""),
       makeDashboardItem("My Survey", Icons.task,"/mySurvey",context),
-      makeDashboardItem("Search My Survey", Icons.search,"/",context),
+      makeDashboardItem("Search My Survey", Icons.search,"/HistorySearch",context),
       makeDashboardItem("Daily Task Count "  + counter.toString(), Icons.format_list_numbered,"",context),
 
     ],
   ),
 ),
+    Container(
+        height: 30,
+        child:
+        Container(
+          width: double.infinity,
+          child: ElevatedButton(
 
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 30,
+            ),
+
+            onPressed: () {
+              Navigator.pop(context);
+            },
+
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+                textStyle: TextStyle(
+                    fontSize: 30,
+                    fontWeight:
+                    FontWeight.bold)),
+          ),
+        )
+    )
 ]
 
         ,)

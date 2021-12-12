@@ -2,10 +2,14 @@ import 'dart:developer';
 
 import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
+import 'package:e_survey/pages/signin.dart';
 import 'package:e_survey/pages/summery.dart';
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'home.dart';
 class DamageDashboard extends StatefulWidget {
   const DamageDashboard({Key? key}) : super(key: key);
 
@@ -14,7 +18,22 @@ class DamageDashboard extends StatefulWidget {
 }
 
 class _DamageDashboardState extends State<DamageDashboard> {
+  String savedBacktLicense ="";
+  static const String userIDPrefKey = 'userId_pref';
+  SharedPreferences? _prefs;
+  String userId="";
+  @override
+  void initState() {
 
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() =>
+      this._prefs=prefs);
+      _loadUser();
+
+    });
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -22,9 +41,55 @@ class _DamageDashboardState extends State<DamageDashboard> {
     log("nnnnnnnnnnn") ;
     log(args.carId);
     log("nnnnnnnnnnn") ;
+    var drawerHeader = UserAccountsDrawerHeader(
+        accountName: Text(userId),
+        accountEmail: Text(userId),
+        currentAccountPicture: CircleAvatar(
+          backgroundColor: Colors.white,
+          child: Icon(Icons.person ,size: 65,color: Colors.blue,),
+        ),);
+    final drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        ListTile(
+            title:  Row(
+              children: <Widget>[
+                SizedBox(width: 5,),
+                Icon(Icons.home),
+                Text('Home'),
 
+              ],
+            ),
+
+            onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home() ))
+
+        ),
+        ListTile(
+            title:  Row(
+              children: <Widget>[
+                SizedBox(width: 5,),
+                Icon(Icons.exit_to_app),
+                SizedBox(width: 5,),
+                Text('Logout'),
+
+              ],
+            ),
+
+            onTap: () async => {
+              await   _prefs!.clear(),
+//Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>Signin())),
+              Navigator.of(context)
+                  .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Signin()), (Route<dynamic> route) => false)
+              //    Navigator.of(context).popUntil(ModalRoute.withName('/'))
+            }
+        ),
+
+      ],
+    );
     return   Scaffold(
-
+      drawer: Drawer(
+        child: drawerItems,
+      ),
       body:
       Container(
           height: double.infinity,
@@ -145,5 +210,11 @@ class _DamageDashboardState extends State<DamageDashboard> {
 
 
     );
+  }
+  void _loadUser(){
+    setState(() {
+      this.userId=this._prefs?.getString(userIDPrefKey)??"";
+
+    });
   }
 }

@@ -8,6 +8,9 @@ class AppUrl {
   static const String surveyCount = baseUrl + '/auth/esurveyController/getSurveyCount?userId=';
   static const String companiesList = baseUrl + '/auth/constant/companiesList';
   static const String eSurveySearch = baseUrl + '/auth/esurveyController/eSurveySearch?';
+  static const String searchSurvey = baseUrl + '/auth/esurveyController/searchSurvey?';
+
+
   static const String claimsDetails = baseUrl + '/auth/esurveyController/getClaimDetails?';
   static const String deleteCarsSurvey = baseUrl + '/auth/esurveyController/deleteCarsSurvey?carId=';
   static const String insertLossCar = baseUrl + '/auth/esurveyController/insertLossCar';

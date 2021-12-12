@@ -4,13 +4,16 @@ import 'dart:developer';
 import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/pages/dataInputCarInformation.dart';
+import 'package:e_survey/pages/signin.dart';
 import 'package:e_survey/utility/LifecycleWatcherState.dart';
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+
 import 'damage_dashboard.dart';
+import 'home.dart';
 class RequiredDocuments extends StatefulWidget {
   const RequiredDocuments({Key? key}) : super(key: key);
 
@@ -84,7 +87,7 @@ class _RequiredDocumentsState extends LifecycleWatcherState<RequiredDocuments>  
             ],
           ),
 
-          onTap: () => Navigator.of(context).pushNamed('/home'),
+          onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home() ))
 
         ),
         ListTile(
@@ -100,8 +103,11 @@ class _RequiredDocumentsState extends LifecycleWatcherState<RequiredDocuments>  
 
             onTap: () async => {
               await   _prefs!.clear(),
-              Navigator.of(context).pushNamed('/'),
-
+//Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>Signin())),
+            Navigator.of(context)
+                  .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>
+                Signin()), (Route<dynamic> route) => false)
+        //    Navigator.of(context).popUntil(ModalRoute.withName('/'))
             }
         ),
 
@@ -256,6 +262,7 @@ SizedBox(
 
   @override
   void onDetached() {
+
     // TODO: implement onDetached
   }
 
@@ -271,7 +278,7 @@ SizedBox(
 
   @override
   void onResumed() {
-    _loadImageDir();
+
   }
 
 }

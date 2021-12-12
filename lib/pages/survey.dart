@@ -99,9 +99,13 @@ class _SurveyState extends State<Survey> {
             } else if (snapshot.hasError) {
               return Icon(Icons.error_outline);
             } else {
-              return CircularProgressIndicator();
+              return Center(
+                child: CircularProgressIndicator()
+                ,
+              );
             }
-          })
+          }
+          )
 
           ),
         ],

@@ -83,10 +83,11 @@ class _BackCarRegistrationState extends State<BackCarRegistration> {
                       ],
                     )
                     ),
-
-                    Expanded(
-                        flex: 1,
-                        child: Container(
+                    Container(
+                        height: 30,
+                        child:
+                        Container(
+                          width: double.infinity,
                           child: ElevatedButton(
 
                             child: Icon(
@@ -98,17 +99,41 @@ class _BackCarRegistrationState extends State<BackCarRegistration> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
+
                             style: ElevatedButton.styleFrom(
                                 primary: Colors.blue,
-
                                 textStyle: TextStyle(
                                     fontSize: 30,
                                     fontWeight:
                                     FontWeight.bold)),
-
                           ),
                         )
-                    )
+                    ),
+                    // Expanded(
+                    //     flex: 1,
+                    //     child: Container(
+                    //       child: ElevatedButton(
+                    //
+                    //         child: Icon(
+                    //           Icons.arrow_back,
+                    //           color: Colors.white,
+                    //           size: 30,
+                    //         ),
+                    //
+                    //         onPressed: () {
+                    //           Navigator.pop(context);
+                    //         },
+                    //         style: ElevatedButton.styleFrom(
+                    //             primary: Colors.blue,
+                    //
+                    //             textStyle: TextStyle(
+                    //                 fontSize: 30,
+                    //                 fontWeight:
+                    //                 FontWeight.bold)),
+                    //
+                    //       ),
+                    //     )
+                    // )
                   ]))
 
 

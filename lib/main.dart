@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:e_survey/args/personalInfoArgs.dart';
 import 'package:e_survey/pages/CarInfoInput.dart';
 import 'package:e_survey/pages/DriverLicenceDashboard.dart';
+import 'package:e_survey/pages/HistorySearch.dart';
+import 'package:e_survey/pages/Policy.dart';
 import 'package:e_survey/pages/claimsList.dart';
 import 'package:e_survey/pages/dashboard.dart';
 import 'package:e_survey/pages/dataInputCarInformation.dart';
@@ -51,5 +53,8 @@ void main() => runApp(MaterialApp(
     '/RequiredDocuments': (context) => RequiredDocuments(),
     '/DriverLicenceImage': (context) => DriverLicenceImage(),
     '/DriverLicenceDashboard': (context) => DriverLicenceDashboard(),
+    '/HistorySearch': (context) => HistorySearch(),
+    '/policy': (context) => Policy(),
+
   },
 ));

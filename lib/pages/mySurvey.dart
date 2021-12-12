@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'claimsList.dart';
+
 
 
 class mySurvey extends StatefulWidget {
@@ -60,7 +62,12 @@ void asyncMethod(String uId) async {
               padding: EdgeInsets.all(10.0),
               itemCount: claims.length,
               itemBuilder: (BuildContext context, index){
-                return Card(
+                return
+                  GestureDetector(
+                    onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>ClaimsList(claims[index].notification,claims[index].companyCode,claims[index].notificationId)));
+                },
+              child:  Card(
                   child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Column(
@@ -93,10 +100,11 @@ void asyncMethod(String uId) async {
                   ),
                   elevation: 5.0,
                   shadowColor: Colors.black54,
-                );
+              ), );
               },
             ),
           ),
+
         ],
       ),
     );

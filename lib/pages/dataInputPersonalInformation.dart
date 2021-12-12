@@ -92,33 +92,57 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
     // temp = yourFuture;
     log(widget.vehicleNumber);
     log(_gender.genderDescription);
-    return MaterialApp(
+    // return MaterialApp(
+    //
+    //
+    //     title: 'Personal Information',
+    //     debugShowCheckedModeBanner: false,
+    //     theme: ThemeData(
+    //       primarySwatch: Colors.blue,
+    //     ),
 
-        // onGenerateRoute: (settings) {
-        //   if (settings.name == DataInputPersonalInformation.routeName) {
-        //     final args = settings.arguments as claimsListArgs;
-        //     return MaterialPageRoute(
-        //       builder: (context) {
-        //
-        //         return DataInputPersonalInformation(
-        //           carId: args.carId,
-        //           companyCode: args.companyCode,
-        //         );
-        //       },
-        //     );
-        //   }
-        //
-        //   assert(false, 'Need to implement ${settings.name}');
-        //   return null;
-        // },
+       // home:
+   return  WillPopScope (
+        onWillPop: (
 
-        title: 'Personal Information',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+            ) async {
+          bool updated = await update(widget.carId,firstNameController.text,
+              lastNameController.text,fatherNameController.text,
+              _textEditingLicenseDateController.text,
+              _textEditingLicenseExpiryDateController.text,phoneNumberController.text,
+              licenseNumber.text, savedUid,_gender.genderId);
 
-        home: Scaffold(
+          if(updated) {
+            ScaffoldMessenger.of(
+                context)
+                .showSnackBar(
+              SnackBar(
+                backgroundColor:
+                Colors.blue,
+                content: Text("updated personaal info"),
+
+                //action: SnackBarAction(label: 'OK', onPressed: () {}),
+              ),
+            );
+            return true;
+          }
+          else {
+            ScaffoldMessenger.of(
+                context)
+                .showSnackBar(
+              SnackBar(
+                backgroundColor:
+                Colors.red,
+                content: Text("updated failed"),
+
+              ),
+            );
+          }
+          return false;
+        },
+
+    child:
+     Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(title: Text("Personal info")),
           body: SingleChildScrollView(
@@ -156,7 +180,10 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
 
 
 
-                                  enabled: widget.vehicleNumber == "0"
+                                  enabled: widget.vehicleNumber == "0"&&!(snapshot.data.carOwnerFirstName ==
+                                      "null" ||
+                                      snapshot
+                                          .data.carOwnerFirstName.isEmpty)
                                       ? false
                                       : true,
                                   validator: (value) {
@@ -359,7 +386,10 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                                 AsyncSnapshot<List<Gender>>
                                                     snapshot) {
                                               if (!snapshot.hasData)
-                                                return CircularProgressIndicator();
+                                                return Center(
+                                                  child: CircularProgressIndicator()
+                                                  ,
+                                                );;
                                               return DropdownButton<Gender>(
 
                                                 items: snapshot.data!
@@ -760,10 +790,17 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                     } else if (snapshot.hasError) {
                       return Icon(Icons.error_outline);
                     } else {
-                      return CircularProgressIndicator();
+                      return Center(
+
+                        child: CircularProgressIndicator()
+                        ,
+                      );
                     }
-                  })),
-        ));
+                  }
+              )
+          )
+    ),
+        );
   }
 
 
@@ -790,7 +827,8 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
             child: child!,
             // child: ?child,
           );
-        });
+        }
+        );
 
     if (newSelectedDate != null) {
       _selectedDate = newSelectedDate;

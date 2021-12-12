@@ -58,7 +58,28 @@ class mySurveyApi {
     }
     return claims;
   }
-
+  Future<List<claimsResponse>> searchHistory(String userId,String passNumber,String from,
+      String to , String companyCode) async {
+    try {
+      Response response = await get(
+          Uri.parse(AppUrl.searchSurvey+"userId="+userId+"&passNumber="+passNumber+"&from="+from+"&to="+to+"&companyCode="+companyCode));
+      claims = [];
+      final extractedData = json.decode(response.body)['claimBeanList'];
+      log(extractedData.toString());
+      for (var i in extractedData) {
+        claims.add(claimsResponse(
+            notificationId: i["notificationId"],
+            claimStatusCode: i['claimStatusCode'],
+            reportedDate:i['reportedDate'],
+            companyCode:i['insCompanyCode'],
+            notification:i['notification']
+        ));
+      }
+    }catch(e ){
+      print('error=$e');
+    }
+    return claims;
+  }
 
 
   Future<int> get_count(String userId ) async {

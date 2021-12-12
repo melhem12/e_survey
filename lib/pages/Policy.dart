@@ -36,8 +36,7 @@ class _PolicyState extends State<Policy> {
   @override
   Widget build(BuildContext context) {
 
-    return   WillPopScope(
-    child:  Scaffold(
+    return     Scaffold(
 
         body:
 
@@ -85,9 +84,39 @@ class _PolicyState extends State<Policy> {
       )
               ),
 
-              Expanded(
-                  flex: 1,
-                  child: Container(
+              // Expanded(
+              //     flex: 1,
+              //     child: Container(
+              //       child: ElevatedButton(
+              //
+              //         child: Icon(
+              //           Icons.arrow_back,
+              //           color: Colors.white,
+              //           size: 30,
+              //         ),
+              //
+              //         onPressed: () {
+              //           Navigator.pop(context);
+              //         },
+              //         style: ElevatedButton.styleFrom(
+              //             primary: Colors.blue,
+              //
+              //             textStyle: TextStyle(
+              //                 fontSize: 30,
+              //                 fontWeight:
+              //                 FontWeight.bold)),
+              //
+              //       ),
+              //     )
+              // )
+
+
+
+              Container(
+                  height: 30,
+                  child:
+                  Container(
+                    width: double.infinity,
                     child: ElevatedButton(
 
                       child: Icon(
@@ -99,40 +128,18 @@ class _PolicyState extends State<Policy> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
+
                       style: ElevatedButton.styleFrom(
                           primary: Colors.blue,
-
                           textStyle: TextStyle(
                               fontSize: 30,
                               fontWeight:
                               FontWeight.bold)),
-
                     ),
                   )
-              )
+              ),
         ]))
-      ),
-      onWillPop:()  async{
-        showDialog<bool>(
-          context: context,
-          builder: (c) => AlertDialog(
-            title: Text('Warning'),
-            content: Text('Do you really want to exit'),
-            actions: [
-              FlatButton(
-                child: Text('Yes'),
-                onPressed: () => Navigator.pop(c, true),
-              ),
-              FlatButton(
-                child: Text('No'),
-                onPressed: () => Navigator.pop(c, false),
-              ),
-            ],
-          ));
-     return false;
-      },
-
-    );
+      );
   }
 
   Future<void> _pickImageFromGallery() async {

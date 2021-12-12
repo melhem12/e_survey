@@ -44,105 +44,105 @@ class _MetPageState extends State<MetPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: ' Car Parts',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-        primarySwatch: Colors.blue,
-        )
+    return
 
 
-
-    ,home:  Scaffold(
+      Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text(" Car Mets")),
       body: Column(mainAxisAlignment: MainAxisAlignment.center,
         children: [
         Expanded(flex: 20,
-            child:  FutureBuilder(
-            future: futureMet,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
+              child: FutureBuilder(
+              future: futureMet,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
 
-                return ListView.builder(
-                  padding: EdgeInsets.all(2.0),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, index) {
-                    return GestureDetector(
-                        onTap: () {
-                          if(saved(snapshot.data[index].partId)){
-                            deleteByCode(int.parse(snapshot.data[index].partId));
+                  return ListView.builder(
+                    padding: EdgeInsets.all(2.0),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, index) {
+                      return GestureDetector(
+                          onTap: () {
+                            if(saved(snapshot.data[index].partId)){
+                              deleteByCode(int.parse(snapshot.data[index].partId));
 
-                          }
-                          else {
-                            _showDial(getRandomString(10),
-                                int.parse(snapshot.data[index].partId),
-                                "", snapshot.data[index].partDescription,
-                                snapshot.data[index]
-                                    .partArabicDescription, widget.partId.toString());
-                          }
-                        },
+                            }
+                            else {
+                              _showDial(getRandomString(10),
+                                  int.parse(snapshot.data[index].partId),
+                                  "", snapshot.data[index].partDescription,
+                                  snapshot.data[index]
+                                      .partArabicDescription, widget.partId.toString());
+                            }
+                          },
 
-                        child: Card(
-                          color:
+                          child: Card(
+                            color:
 
-                          saved(snapshot.data[index].partId)? Colors.blue: Colors.white,
-                          child: Padding(
+                            saved(snapshot.data[index].partId)? Colors.blue: Colors.white,
+                            child: Padding(
 
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(
+                              padding: EdgeInsets.all(10.0),
+                              child: Column(
 
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  snapshot.data[index].partArabicDescription,
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      color:  saved(snapshot.data[index].partId)? Colors.white: Colors.black
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-
-
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      snapshot.data[index].partDescription
-                                      ,
-                                      style: TextStyle(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    snapshot.data[index].partArabicDescription,
+                                    style: TextStyle(
                                         fontSize: 16.0,
-                                        color: saved(snapshot.data[index].partId)? Colors.white: Colors.black,
-                                      ),
+                                        color:  saved(snapshot.data[index].partId)? Colors.white: Colors.black
                                     ),
+                                  ),
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
 
-                                  ],
-                                ),
 
-                                // SizedBox(
-                                //   height: 5.0,
-                                // ),
-                              ],
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        snapshot.data[index].partDescription
+                                        ,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: saved(snapshot.data[index].partId)? Colors.white: Colors.black,
+                                        ),
+                                      ),
 
+                                    ],
+                                  ),
+
+                                  // SizedBox(
+                                  //   height: 5.0,
+                                  // ),
+                                ],
+
+                              ),
                             ),
-                          ),
-                          elevation: 5.0,
-                          shadowColor: Colors.black54,
-                        ));
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Icon(Icons.error_outline);
-              } else {
-                return CircularProgressIndicator();
+                            elevation: 5.0,
+                            shadowColor: Colors.black54,
+                          ));
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Icon(Icons.error_outline);
+                } else {
+                 return Center(
+                    child: CircularProgressIndicator()
+                    ,
+                  );
+                }
               }
-            })
+
+
+)
         ),
         Expanded(
           flex: 1,
@@ -169,7 +169,7 @@ class _MetPageState extends State<MetPage> {
               ),
             )
         )
-      ],),),
+      ],),
     );
   }
 

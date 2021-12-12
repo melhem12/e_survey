@@ -99,16 +99,19 @@ class _SummeryState extends State<Summery> {
 
   @override
   Widget build(BuildContext context) {
-    return   WillPopScope (
-        onWillPop: () async=> false,
-    child:
+    return
       Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            save();
-          },
-          child: const Icon(Icons.upload),
-          backgroundColor: Colors.blue,
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: 50),
+
+          child: FloatingActionButton(
+
+            onPressed: () {
+              save();
+            },
+            child: const Icon(Icons.upload),
+            backgroundColor: Colors.blue,
+          ),
         ),
         appBar: AppBar(
           title: Text("Summary"),
@@ -144,7 +147,10 @@ class _SummeryState extends State<Summery> {
               ),
               Expanded(
                   flex: 12,
-                  child: ListView.builder(
+                  child:
+                  pmList.length>0?
+
+                  ListView.builder(
                     // padding: EdgeInsets.all(10.0),
                     itemCount: pmList.length,
                     itemBuilder: (BuildContext context, index) {
@@ -256,6 +262,11 @@ class _SummeryState extends State<Summery> {
                           ));
                     },
                   )
+                  :
+                  Center(
+                  child: CircularProgressIndicator()
+          ,
+        )
               ),
               Expanded(
                 flex: 1,
@@ -342,8 +353,11 @@ class _SummeryState extends State<Summery> {
                                       ),
                                     );
                                     //Navigator.of(context).pushReplacementNamed('/ClaimsList', arguments: mySurveyArgs('notficationId', widget.companyCode.toString(), widget.companyCode.toString()));
-                                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ClaimsList( widget.notification.toString(), widget.companyCode.toString(),widget.notificationId.toString())));
-                                   // Navigator.pushNamed(context, "/ClaimsList",arguments: mySurveyArgs('notficationId', widget.companyCode.toString(), widget.companyCode.toString()));
+                                    Navigator.of(context)
+                                        .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>
+                                        ClaimsList( widget.notification.toString(), widget.companyCode.toString(),widget.notificationId.toString())
+                                    ), (Route<dynamic> route) => false);
+
 
                                   }else{
                                     ScaffoldMessenger.of(
@@ -377,7 +391,7 @@ class _SummeryState extends State<Summery> {
               ),
             ],
           ),
-        )));
+        ));
   }
 
   void _refreshData() async {

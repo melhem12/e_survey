@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:math';
-
 import 'package:e_survey/Models/CarParts.dart';
 import 'package:e_survey/Models/PartsModel.dart';
 import 'package:e_survey/Models/description.dart';
@@ -30,10 +29,10 @@ class parts extends StatefulWidget {
 }
 
 class _partsState extends State<parts> {
+    bool isLoading = false;
     String partDesc='';
     String damageDesc='';
     bool clicked= false;
-
     late Future<List<PartGroup>> futurePartGroup;
     late Future<List<Direction>> futureDirection;
     late Future<List<Description>> futureDescription=Future.value([]);
@@ -57,7 +56,6 @@ class _partsState extends State<parts> {
       print(widget.carId);
 
       getDamaged(widget.carId.toString());
-
     super.initState();
   }
   getDamaged(String carId) async{
@@ -80,16 +78,12 @@ class _partsState extends State<parts> {
     TextEditingController nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: ' Car Parts',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: Scaffold(
+    return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(title: Text(" Car Parts")),
-          body:SafeArea(
+          body:
+
+          SafeArea(
     child: SingleChildScrollView(
     child: Card(
 
@@ -243,7 +237,10 @@ class _partsState extends State<parts> {
                               onPressed: () async {
                                // showLoaderDialog(context);
 
-
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                await Future.delayed(const Duration(seconds: 1));
                                   if(_partGroup.code.isEmpty){
                                  List<PartGroup> pg= await futurePartGroup;
                                  setState(() {
@@ -257,8 +254,13 @@ class _partsState extends State<parts> {
                                       _direction=di[0];
                                     });
                                   }
-
+                                  //pd.show(max: 100, msg: 'Load Car  Parts');
+                                  //_dialog.show(message: 'Loading...', type:  SimpleFontelicoProgressDialogType.normal );
                               futureCarParts = PartMetApi().get_Car_Parts(_partGroup.code, widget.doors.toString(), widget.bodyType.toString(), _direction.code, partDesc);
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                  // _dialog.hide();
                                  // PartMetApi().getPartTest(_partGroup.code, widget.doors.toString(), widget.bodyType.toString(), _direction.code, partDesc);
                                   setState(() {
 
@@ -286,13 +288,22 @@ class _partsState extends State<parts> {
               ),
 
 
-
-
-
               Container(
                   height: 300,
                   width: double.infinity,
-                  child:
+                  child:(isLoading)
+                      ?
+                      Center(
+
+                          child:
+
+
+                      CircularProgressIndicator(
+                        color: Colors.white,
+
+                        strokeWidth: 2,
+                      )
+                      ):
                   FutureBuilder(
                   future: futureCarParts,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -355,33 +366,40 @@ class _partsState extends State<parts> {
                                               color: saved(snapshot.data[index].partId)? Colors.white: Colors.black,
                                             ),
                                           ),
-                                          snapshot.data[index].metCount >0
-                                              ?  FlatButton(
-                                            color: Colors.lightBlue,
-                                            onPressed: () {
-                                              if(saved(snapshot.data[index].partId)) {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            MetPage(
-                                                                _partGroup.code,
-                                                                widget.doors
-                                                                    .toString(),
-                                                                widget.bodyType
-                                                                    .toString(),
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .partId)
-                                                    ));
-                                              }
-                                            },
-                                            child: Text('MET',
-                                                style: TextStyle(color: Colors.white, fontSize: 16)),
-                                          )
-                                              :Text(""),
+
                                         ],
                                       ),
+                                     Row(
+                                       mainAxisAlignment: MainAxisAlignment.end,
+                                       children: [
+                                      snapshot.data[index].metCount >0
+                                          ?  FlatButton(
+                                        color: Colors.lightBlue,
+                                        onPressed: () {
+                                          if(saved(snapshot.data[index].partId)) {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MetPage(
+                                                            _partGroup.code,
+                                                            widget.doors
+                                                                .toString(),
+                                                            widget.bodyType
+                                                                .toString(),
+                                                            snapshot
+                                                                .data[index]
+                                                                .partId)
+                                                ));
+                                          }
+                                        },
+                                        child: Text('MET',
+                                            style: TextStyle(color: Colors.white, fontSize: 16)),
+                                      )
+                                          :Text(""),
 
+                                    ]
+
+                                     ),
                                       // SizedBox(
                                       //   height: 5.0,
                                       // ),
@@ -443,7 +461,7 @@ SizedBox(
         ),
     ),
           ),
-        )
+
     );
   }
 
@@ -667,6 +685,9 @@ setState(() {
       SQLHelper.deleteByMetParent(code);
       _refreshData();
     }
+
+
+
     var  _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     Random _rnd = Random();
 
