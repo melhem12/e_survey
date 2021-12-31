@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:e_survey/Models/InsuranceCompany.dart';
+import 'package:e_survey/Models/PolicyType.dart';
 import 'package:e_survey/Models/body_type.dart';
 import 'package:e_survey/Models/brand.dart';
 import 'package:e_survey/Models/car_trade_mark.dart';
@@ -12,11 +16,15 @@ import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/args/claimsListArgs.dart';
 import 'package:e_survey/args/personalInfoArgs.dart';
+import 'package:simple_ocr_plugin/simple_ocr_plugin.dart';
 import 'package:e_survey/pages/requiredDocuments.dart';
 import 'package:e_survey/service/constantsApi.dart';
 import 'package:e_survey/service/updatingInformationService.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataInputCarInformation extends StatefulWidget {
@@ -47,6 +55,8 @@ class DataInputCarInformation extends StatefulWidget {
   String? lastName;
   String? companyCode;
   String? notification;
+   String ? insuranceCompanyId;
+   String ? policyType;
   static const routeName = '/DataInputCarInformation';
 
   DataInputCarInformation(
@@ -77,6 +87,8 @@ class DataInputCarInformation extends StatefulWidget {
       this.lastName,
      this.companyCode,
       this.notification,
+      this.insuranceCompanyId,
+      this.policyType,
 
       );
 
@@ -89,13 +101,17 @@ class DataInputCarInformation extends StatefulWidget {
 }
 
 class _DataInputCarInformationState extends State<DataInputCarInformation> {
-  late Future<List<Brands>> futureBrand;
-  late Future<List<CarTradeMark>> futureTrademark;
-  late Future<List<Doors>> futureDoors;
-  late Future<List<VehicleSize>> futureVSize;
-  late Future<List<BodyType>> futureBodyType;
+  late Future<List<Brands>> futureBrand=Future.value([]);
+  late Future<List<CarTradeMark>> futureTrademark=Future.value([]);
+  late Future<List<Doors>> futureDoors=Future.value([]);
+  late Future<List<VehicleSize>> futureVSize=Future.value([]);
+  late Future<List<BodyType>> futureBodyType=Future.value([]);
+  late Future<List<InsuranceCompany>> futureInsuranceCompanies=Future.value([]);
+  late Future<List<PolicyType>> futurePolicyType=Future.value([]);
 
-
+  final _picker = ImagePicker();
+  File? _imageFile;
+  String text='';
   static const String userIDPrefKey = 'userId_pref';
   String savedUid = "";
   String hintDoors="Select doors";
@@ -109,23 +125,34 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
   late Brands _brands = Brands(carBrandId: '', carBrandDescription: '');
   late CarTradeMark _carTradeMark =
   CarTradeMark(carTrademarkId: '', carTrademarkDescription: '');
+late PolicyType _policyType =PolicyType(code: '', description: '');
+
+  late InsuranceCompany _insuranceCompany =
+  InsuranceCompany(supplierId: '',supplierName: '');
+
+
+
   double height = 15;
   final yearController = TextEditingController();
   final policyNumController = TextEditingController();
   final plateController = TextEditingController();
   final chasisController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   SharedPreferences? _prefs;
-
+  String parsedText= '';
+  static const String tokenPrefKey = 'token_pref';
+  String token ="";
   @override
   void initState() {
     SharedPreferences.getInstance().then((prefs) {
       setState(() => this._prefs = prefs);
       _loadUserId();
-    });
-    futureBrand = ConstantsApi().get_brand();
-    futureBodyType = ConstantsApi().get_body_types();
-    futureDoors = ConstantsApi().get_doors();
-    futureVSize = ConstantsApi().get_vehicle_size();
+      futureBrand = ConstantsApi().get_brand(token);
+      futureBodyType = ConstantsApi().get_body_types(token);
+      futureDoors = ConstantsApi().get_doors(token);
+      futureVSize = ConstantsApi().get_vehicle_size(token);
+      futureInsuranceCompanies = ConstantsApi().getCarInsuranceCompanies(token);
+      futurePolicyType=ConstantsApi().getPolicyType(token);
     yearController
       ..text = widget.modelYear.toString() ==
           "null" ||
@@ -159,7 +186,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
     if (widget.brandId!.isNotEmpty || widget.brandId != "null") {
       getBrandObject();
       futureTrademark =
-          ConstantsApi().getCarTradeMarkList(widget.brandId.toString());
+          ConstantsApi().getCarTradeMarkList(widget.brandId.toString(),token);
 
       if (widget.carTrademarkId!.isNotEmpty ||
           widget.carTrademarkId != "null") {
@@ -170,6 +197,13 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
         widget.bodyType != "null") {
       getBodyObject();
     }
+
+      if (widget.insurerCode!.isNotEmpty ||
+          widget.insurerCode != "null") {
+        getCarSupplier();
+      }
+
+
     if (widget.vehicleSize!.isNotEmpty ||
         widget.vehicleSize != "null") {
       getVehSizeObject();
@@ -178,8 +212,13 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
         widget.doors != "null") {
       getDoorsObject();
     }
+      if (widget.policyType!.isNotEmpty ||
+          widget.policyType != "null") {
+        getPolicyType();
+      }
 
-
+    }
+    );
     super.initState();
   }
 
@@ -221,6 +260,21 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
         break;
       }
     }
+
+
+  }
+
+  getCarSupplier() async {
+    List<InsuranceCompany> clist = await futureInsuranceCompanies as List<InsuranceCompany>;
+    for (var i in clist) {
+      if (widget.insuranceCompanyId == i.supplierId) {
+        setState(() {
+          _insuranceCompany = i;
+          log("/////zzzzzzz///");
+        });
+        break;
+      }
+    }
   }
 
   getVehSizeObject() async {
@@ -249,6 +303,18 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
       }
     }
   }
+  getPolicyType() async {
+    List<PolicyType> policyTypes = await futurePolicyType as List<PolicyType>;
+    for (var i in policyTypes) {
+      if (widget.policyType == i.code) {
+        setState(() {
+          _policyType = i;
+          log("/////wwww///");
+        });
+        break;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,7 +337,8 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                 chasisController.text,
                 plateController.text,
                 policyNumController.text,
-                savedUid);
+                savedUid,_insuranceCompany.supplierId,_policyType.code
+            );
 
             if (updated) {
               ScaffoldMessenger.of(
@@ -315,6 +382,8 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
+    child: Form(
+    key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,110 +402,215 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                     Container(
                       child: Column(
                         children: <Widget>[
-                          Text("Make Name ",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              )),
+                          // Text("Make Name ",
+                          //     style: TextStyle(
+                          //       fontSize: 14,
+                          //       color: Colors.grey,
+                          //     )
+                          // ),
+
+
+
+                          // StatefulBuilder(builder:
+                          //     (BuildContext context, StateSetter setState) {
+                          //   return FutureBuilder<List<Brands>>(
+                          //       future: futureBrand,
+                          //       builder: (BuildContext context,
+                          //           AsyncSnapshot<List<Brands>> snapshot) {
+                          //         if (!snapshot.hasData)
+                          //           return CircularProgressIndicator();
+                          //         return DropdownButton<Brands>(
+                          //           items: snapshot.data!
+                          //               .map((brand) =>
+                          //               DropdownMenuItem<Brands>(
+                          //                 enabled: widget.vehicleNumber == "0"
+                          //                     ? false
+                          //                     : true,
+                          //                 child: Text(
+                          //                     brand.carBrandDescription),
+                          //                 value: brand,
+                          //               ))
+                          //               .toList(),
+                          //           onChanged: (Brands? value) {
+                          //             log(value!.carBrandDescription);
+                          //             this.setState(() {
+                          //               futureTrademark = ConstantsApi()
+                          //                   .getCarTradeMarkList(
+                          //                   value.carBrandId);
+                          //             });
+                          //             setState(() => _brands = value);
+                          //             _carTradeMark = CarTradeMark(
+                          //                 carTrademarkId: '',
+                          //                 carTrademarkDescription: '');
+                          //           },
+                          //           isExpanded: true,
+                          //           //   value: _brands==null?Brands(carBrandId: "carBrandId", carBrandDescription: "carBrandDescription"):_brands,
+                          //           value: _brands.carBrandId.isEmpty
+                          //               ? null
+                          //               : snapshot.data![
+                          //           snapshot.data!.indexOf(_brands)],
+                          //           hint: new Text(hintBrand.isEmpty?"empty brand":hintBrand ,style: TextStyle(color: hintBrand.isEmpty?Colors.red:Colors.black54),),
+                          //           // hint: Text(_gender.genderDescription.isEmpty?"select gender":_gender.genderDescription
+                          //           // ),
+                          //         );
+                          //       });
+                          // }),
+
+
                           StatefulBuilder(builder:
                               (BuildContext context, StateSetter setState) {
+
+
                             return FutureBuilder<List<Brands>>(
                                 future: futureBrand,
                                 builder: (BuildContext context,
                                     AsyncSnapshot<List<Brands>> snapshot) {
                                   if (!snapshot.hasData)
                                     return CircularProgressIndicator();
-                                  return DropdownButton<Brands>(
-                                    items: snapshot.data!
-                                        .map((brand) =>
-                                        DropdownMenuItem<Brands>(
-                                          enabled: widget.vehicleNumber == "0"
-                                              ? false
-                                              : true,
-                                          child: Text(
-                                              brand.carBrandDescription),
-                                          value: brand,
-                                        ))
-                                        .toList(),
-                                    onChanged: (Brands? value) {
-                                      log(value!.carBrandDescription);
-                                      this.setState(() {
-                                        futureTrademark = ConstantsApi()
-                                            .getCarTradeMarkList(
-                                            value.carBrandId);
-                                      });
-                                      setState(() => _brands = value);
-                                      _carTradeMark = CarTradeMark(
-                                          carTrademarkId: '',
-                                          carTrademarkDescription: '');
-                                    },
-                                    isExpanded: true,
-                                    //   value: _brands==null?Brands(carBrandId: "carBrandId", carBrandDescription: "carBrandDescription"):_brands,
-                                    value: _brands.carBrandId.isEmpty
-                                        ? null
-                                        : snapshot.data![
-                                    snapshot.data!.indexOf(_brands)],
-                                    hint: new Text(hintBrand.isEmpty?"empty brand":hintBrand ,style: TextStyle(color: hintBrand.isEmpty?Colors.red:Colors.black54),),
-                                    // hint: Text(_gender.genderDescription.isEmpty?"select gender":_gender.genderDescription
-                                    // ),
+
+
+                                return  DropdownSearch<Brands>(
+                                    mode: Mode.MENU,
+                                    // showSelectedItems: true,
+                                    items:  snapshot.data!,
+                                  itemAsString: ( var u) => u!.carBrandDescription,
+                                    showSearchBox: true,
+                                  onChanged: (Brands? value) {
+                                    log(value!.carBrandDescription);
+                                    this.setState(() {
+                                      futureTrademark = ConstantsApi()
+                                          .getCarTradeMarkList(
+                                          value.carBrandId,token);
+                                    });
+                                    setState(() => _brands = value);
+                                    _carTradeMark = CarTradeMark(
+                                        carTrademarkId: '',
+                                        carTrademarkDescription: '');
+                                  },
+                                  enabled:widget.vehicleNumber == "0"
+                                      ? false
+                                      : true ,
+                                  // validator: (Brands  ? item) {
+                                  //   if (_brands.carBrandDescription.isEmpty)
+                                  //     return "Required field";
+                                  //   else
+                                  //     return null;
+                                  // },
+                                  validator: (value) {
+                                    if (_brands.carBrandDescription.isEmpty) {
+                                      return 'Enter First Name';
+                                    }
+                                    return null;
+                                  },
+                                  label: "Make Name",
+                                  hint: hintBrand,
+                                  selectedItem: _brands,
                                   );
+
+
                                 });
                           }),
+
+
+
                         ],
                       ),
                     ),
+
+
+
+
+
+
                     SizedBox(
                       height: height,
                     ),
-                    Container(
-                      child: Column(
-                        children: <Widget>[
-                          Text("Model Name ",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              )),
-                        ],
-                      ),
-                    ),
-                    StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                          return FutureBuilder<List<CarTradeMark>>(
-                              future: futureTrademark,
+                    // Container(
+                    //   child: Column(
+                    //     children: <Widget>[
+                    //       Text("Model Name ",
+                    //           style: TextStyle(
+                    //             fontSize: 14,
+                    //             color: Colors.grey,
+                    //           )),
+                    //     ],
+                    //   ),
+                    // ),
+                    // StatefulBuilder(
+                    //     builder: (BuildContext context, StateSetter setState) {
+                    //       return FutureBuilder<List<CarTradeMark>>(
+                    //           future: futureTrademark,
+                    //
+                    //           builder: (BuildContext context,
+                    //               AsyncSnapshot<List<CarTradeMark>> snapshot) {
+                    //             if (!snapshot.hasData)
+                    //               return CircularProgressIndicator();
+                    //             return DropdownButton<CarTradeMark>(
+                    //
+                    //               items: snapshot.data!
+                    //                   .map((mark) =>
+                    //                   DropdownMenuItem<CarTradeMark>(
+                    //                     enabled: widget.vehicleNumber == "0"
+                    //                         ? false
+                    //                         : true,
+                    //
+                    //                     child:
+                    //                     Text(mark.carTrademarkDescription),
+                    //                     value: mark,
+                    //                   ))
+                    //                   .toList(),
+                    //               onChanged: (CarTradeMark? value) {
+                    //                 setState(() => _carTradeMark = value!);
+                    //               },
+                    //               isExpanded: true,
+                    //               //   value: _brands==null?Brands(carBrandId: "carBrandId", carBrandDescription: "carBrandDescription"):_brands,
+                    //               value: _carTradeMark.carTrademarkId.isEmpty ||
+                    //                   _carTradeMark == null
+                    //                   ? null
+                    //                   : snapshot.data![
+                    //               snapshot.data!.indexOf(_carTradeMark)],
+                    //               hint: new Text(hinttradeMark.isEmpty?"empty tardeMark":hinttradeMark ,style: TextStyle(color: hinttradeMark.isEmpty?Colors.red:Colors.black54),),
+                    //             );
+                    //           });
+                    //     }
+                    //     ),
+                    StatefulBuilder(builder:
+                        (BuildContext context, StateSetter setState) {
 
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<List<CarTradeMark>> snapshot) {
-                                if (!snapshot.hasData)
-                                  return CircularProgressIndicator();
-                                return DropdownButton<CarTradeMark>(
 
-                                  items: snapshot.data!
-                                      .map((mark) =>
-                                      DropdownMenuItem<CarTradeMark>(
-                                        enabled: widget.vehicleNumber == "0"
-                                            ? false
-                                            : true,
+                      return FutureBuilder<List<CarTradeMark>>(
+                          future: futureTrademark,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<CarTradeMark>> snapshot) {
+                            if (!snapshot.hasData)
+                              return CircularProgressIndicator();
 
-                                        child:
-                                        Text(mark.carTrademarkDescription),
-                                        value: mark,
-                                      ))
-                                      .toList(),
-                                  onChanged: (CarTradeMark? value) {
-                                    setState(() => _carTradeMark = value!);
-                                  },
-                                  isExpanded: true,
-                                  //   value: _brands==null?Brands(carBrandId: "carBrandId", carBrandDescription: "carBrandDescription"):_brands,
-                                  value: _carTradeMark.carTrademarkId.isEmpty ||
-                                      _carTradeMark == null
-                                      ? null
-                                      : snapshot.data![
-                                  snapshot.data!.indexOf(_carTradeMark)],
-                                  hint: new Text(hinttradeMark.isEmpty?"empty tardeMark":hinttradeMark ,style: TextStyle(color: hinttradeMark.isEmpty?Colors.red:Colors.black54),),
-                                );
-                              });
-                        }),
 
+                            return  DropdownSearch<CarTradeMark>(
+                              mode: Mode.MENU,
+                              // showSelectedItems: true,
+                              items:  snapshot.data!,
+                              itemAsString: ( var u) => u!.carTrademarkDescription,
+                              showSearchBox: true,
+                              onChanged: (CarTradeMark? value) {
+                                                setState(() => _carTradeMark = value!);
+
+                              },
+                              enabled:widget.vehicleNumber == "0"
+                                  ? false
+                                  : true ,
+                              validator: (CarTradeMark  ? item) {
+                                if (item==null)
+                                  return "Required field";
+                                else
+                                  return null;
+                              },
+                              label: "Model Name",
+                              selectedItem: _carTradeMark,
+                            );
+
+                          });
+                    }),
                     SizedBox(
                       height: height,
                     ),
@@ -481,6 +655,9 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                       style: TextStyle(
                         color: Colors.blue,
                       ),
+                      // onTap: () {
+                      //   _pickImageFromCamera();
+                      // },
                       decoration: InputDecoration(
                         labelText: 'Chasis Number',
                         isDense: true,
@@ -683,7 +860,8 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                             color: Colors.black,
                           )),
                     ),
-                    TextField(
+                    widget.vehicleNumber == "0"
+                        ?  TextField(
                       enabled: widget.vehicleNumber == "0"
                           ? false
                           : true,
@@ -709,6 +887,109 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                         ),
                         filled: true,
                       ),
+                    ):Column(
+                      children: [
+
+
+
+
+
+
+
+                        StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+
+
+                          return FutureBuilder<List<InsuranceCompany>>(
+                              future: futureInsuranceCompanies,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<InsuranceCompany>> snapshot) {
+                                if (!snapshot.hasData)
+                                  return CircularProgressIndicator();
+
+
+                                return  DropdownSearch<InsuranceCompany>(
+                                  mode: Mode.BOTTOM_SHEET,
+                                  // showSelectedItems: true,
+                                  items:  snapshot.data!,
+                                  itemAsString: ( var u) => u!.supplierName,
+                                  showSearchBox: true,
+                                  onChanged: (InsuranceCompany? value) {
+                                    setState(() => _insuranceCompany = value!);
+
+                                  },
+
+
+                                  label: "Insurance company",
+                                  selectedItem: _insuranceCompany,
+                                );
+
+                              });
+                        }),
+                        SizedBox(
+                          height: height,
+                        ),
+
+
+
+
+
+
+                        Container(
+                          child: Column(
+                            children: <Widget>[
+                              Text("Policy Types ",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  )),
+
+                              StatefulBuilder(
+                                  builder: (BuildContext context,
+                                      StateSetter setState) {
+                                    return FutureBuilder<List<PolicyType>>(
+                                        future: futurePolicyType,
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<List<PolicyType>> snapshot) {
+                                          if (!snapshot.hasData)
+                                            return CircularProgressIndicator();
+                                          return DropdownButton<PolicyType>(
+
+                                            items: snapshot.data!
+                                                .map((door) =>
+                                                DropdownMenuItem<PolicyType>(
+                                                  child:
+                                                  Text(door.description),
+                                                  value: door,
+                                                ))
+                                                .toList(),
+                                            onChanged: (PolicyType? value) {
+                                              setState(() => _policyType = value!);
+                                            },
+                                            isExpanded: true,
+                                            value: _policyType.code.isEmpty
+                                                ? null
+                                                : snapshot.data![
+                                            snapshot.data!.indexOf(_policyType)],
+                                            hint: new Text("Policy Type"),
+
+                                          );
+                                        });
+                                  }),
+
+
+                            ],
+                          ),
+                        ),
+
+
+
+
+
+
+
+
+                      ],
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
@@ -735,7 +1016,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
       chasisController.text,
       plateController.text,
       policyNumController.text,
-      savedUid);
+      savedUid,_insuranceCompany.supplierId,_policyType.code);
 
   if (updated) {
     ScaffoldMessenger.of(
@@ -779,7 +1060,6 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
                         SizedBox(
                           height: height,
                         ),
-
                         Expanded(
                             flex: 1,
                             child: Container(
@@ -822,7 +1102,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
 
     }
     if(_doors.code.isNotEmpty&&_carTradeMark.carTrademarkId.isNotEmpty&&_brands.carBrandId.isNotEmpty&&_vehicleSize.code.isNotEmpty&&_bodyType.code.isNotEmpty) {
-  bool updated = await update(widget.carId.toString(),_brands.carBrandId,_carTradeMark.carTrademarkId,_vehicleSize.code,_bodyType.code,_doors.code,yearController.text,chasisController.text,plateController.text,policyNumController.text,savedUid);
+  bool updated = await update(widget.carId.toString(),_brands.carBrandId,_carTradeMark.carTrademarkId,_vehicleSize.code,_bodyType.code,_doors.code,yearController.text,chasisController.text,plateController.text,policyNumController.text,savedUid,_insuranceCompany.supplierId,_policyType.code);
 
     if(updated) {
       ScaffoldMessenger.of(
@@ -873,19 +1153,52 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
           ),
         ),
       ),
-
+      ),
     );
+  }
+  Future<void> _pickImageFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() => this._imageFile = File(pickedFile.path));
+      log(pickedFile.path);
+      _onRecogniseTap(pickedFile.path);
+    }
+  }
+  Future<void> _onRecogniseTap( String path) async {
+    //args support android / Web , i don't have a mac
+    log("read from image");
+
+
+    try {
+      text = (await SimpleOcrPlugin.performOCR(path))!;
+ parsedText =jsonDecode(text)["text"];
+    } catch(e) {
+      print("exception on OCR operation: ${e.toString()}");
+    }
+    log(text);
+  setState(() {
+      chasisController.text = parsedText;
+    });
   }
 
   void _loadUserId() {
     setState(() {
       this.savedUid = this._prefs?.getString(userIDPrefKey) ?? "";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
+    });
+  }
+  void _loadUser() async {
+    SharedPreferences pr = await SharedPreferences.getInstance();
+    setState(() {
+      savedUid = pr.getString(userIDPrefKey)! ;
+      token=pr.getString(tokenPrefKey)!;
     });
   }
 
 Future<bool> update(String carId,String carBrandId,String carTradeMarkId,String carVehicleSize,String carBodyType,
-    String carDoors,String carYear,String carChasisNumber,String carPlate,String carPolicyNumber,String userId ) async {
-  bool updated  = await updatingInformationService().updateCarInfo(  carId, carBrandId, carTradeMarkId, carVehicleSize, carBodyType, carDoors, carYear, carChasisNumber, carPlate, carPolicyNumber, userId);
+    String carDoors,String carYear,String carChasisNumber,String carPlate,String carPolicyNumber,String userId,String carSupplierId ,String policyType ) async {
+  bool updated  = await updatingInformationService().updateCarInfo(  carId, carBrandId, carTradeMarkId, carVehicleSize, carBodyType, carDoors, carYear, carChasisNumber, carPlate, carPolicyNumber, userId,token,carSupplierId,policyType);
   return updated;
 }
 }

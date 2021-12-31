@@ -7,8 +7,14 @@ import 'dart:convert';
 class claimsApi{
   List<ClaimDetailResponse> claimsDetails = [];
 
-  Future<List<ClaimDetailResponse>> get_claims_details(String notificationId ,String companyCode) async {
-    var response = await   http.get(Uri.parse(AppUrl.claimsDetails+"notificationId="+notificationId+"&companyCode="+companyCode));
+  Future<List<ClaimDetailResponse>> get_claims_details(String notificationId ,String companyCode,String token) async {
+    var response = await   http.get(Uri.parse(AppUrl.claimsDetails+"notificationId="+notificationId+"&companyCode="+companyCode),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+
+        });
 
     if (response.statusCode == 200) {
       final claimsDetailsData = json.decode(response.body)['claimDetailBeanList'];
@@ -47,8 +53,14 @@ class claimsApi{
 
 
 
-  Future<bool> deleteCarsSurvey(String carId ,String userId) async {
-    var response = await   http.delete(Uri.parse(AppUrl.deleteCarsSurvey+carId+"&userId="+userId));
+  Future<bool> deleteCarsSurvey(String carId ,String userId, String token) async {
+    var response = await   http.delete(Uri.parse(AppUrl.deleteCarsSurvey+carId+"&userId="+userId),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+
+        });
     if (response.statusCode == 200) {
 return true;
     }
@@ -60,10 +72,13 @@ return true;
     }
   }
 
-  Future<void> insertLossCar(String notification ,String userId) async {
+  Future<String> insertLossCar(String notification ,String userId,String token) async {
     var response = await   http.post(Uri.parse(AppUrl.insertLossCar),
         headers: <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+
     }
     ,
     body: jsonEncode(<String, String>{
@@ -71,7 +86,8 @@ return true;
     'notification': notification
     }),);
     if (response.statusCode == 201 ||response.statusCode == 200) {
-
+      final data = json.decode(response.body);
+      return    data["carId"].toString();
     }
     else {
 
@@ -83,10 +99,12 @@ return true;
 
 
 
-  Future<void> insertCarsSurvey(String carId ,String userId) async {
+  Future<void> insertCarsSurvey(String carId ,String userId,String token) async {
     var response = await   http.post(Uri.parse(AppUrl.insertCarsSurvey),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
       }
       ,
       body: jsonEncode(<String, String>{

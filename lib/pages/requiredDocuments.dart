@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:e_survey/args/BigArgs.dart';
@@ -149,10 +150,10 @@ class _RequiredDocumentsState extends LifecycleWatcherState<RequiredDocuments>  
                   children: <Widget>[
 
                     // Text(""),
-                    makeDashboardItem2("Driving License ", savedFrontLicense.isNotEmpty&&savedBacktLicense.isNotEmpty?Icons.check:Icons.drive_eta ,"/DriverLicenceDashboard",context,'','',''),
-                    makeDashboardItem2("Car Registration", savedFrontCarRegistration.isNotEmpty&&savedBackCarRegistration.isNotEmpty?Icons.check:Icons.car_rental,"/carRegistration",context,'','',''),
-                    makeDashboardItem2("Vin number", savedVin.isNotEmpty?Icons.check:Icons.car_rental,"/vin",context,'','',''),
-                    makeDashboardItem2("policy", savedPolicy.isNotEmpty?Icons.check:Icons.task,"/policy",context,'','',''),
+                    makeDashboardItem2("Driving License ", savedFrontLicense.isNotEmpty&&savedBacktLicense.isNotEmpty?Icons.check:Icons.drive_eta ,"/DriverLicenceDashboard",context,'','','',onGoBack("")),
+                    makeDashboardItem2("Car Registration", savedFrontCarRegistration.isNotEmpty&&savedBackCarRegistration.isNotEmpty?Icons.check:Icons.car_rental,"/carRegistration",context,'','','',onGoBack("")),
+                    makeDashboardItem2("Vin number", savedVin.isNotEmpty?Icons.check:Icons.car_rental,"/vin",context,'','','',onGoBack("")),
+                    makeDashboardItem2("policy", savedPolicy.isNotEmpty?Icons.check:Icons.task,"/policy",context,'','','',onGoBack("")),
 
                     //makeDashboardItem("", Icons.task,"/",context),
 
@@ -219,7 +220,7 @@ SizedBox(
                             MaterialPageRoute(builder: (context) => DamageDashboard(),settings: RouteSettings(
                                 arguments:BigArgs (carId: args.carId,bodyType: args.bodyType,doors: args.doors,fName: args.fName,fatherName:args.fatherName,lName:args.lName,brand: args.brand,tradeMark: args.tradeMark,companyCode: args.companyCode,notification: args.notification,notificationId: args.notificationId),
                                 )),
-                            );
+                            ).then(onGoBack);
 
                             }
 ,
@@ -263,22 +264,21 @@ SizedBox(
   @override
   void onDetached() {
 
-    // TODO: implement onDetached
   }
 
   @override
   void onInactive() {
-    // TODO: implement onInactive
   }
 
   @override
   void onPaused() {
-    // TODO: implement onPaused
   }
 
   @override
   void onResumed() {
 
   }
-
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
+  }
 }

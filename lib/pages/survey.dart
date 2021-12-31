@@ -22,6 +22,24 @@ class Survey extends StatefulWidget {
 class _SurveyState extends State<Survey> {
 
   List <claimsResponse> claims=[];
+  static const String tokenPrefKey = 'token_pref';
+  static const String userIDPrefKey = 'userId_pref';
+  SharedPreferences? _prefs;
+  String userId="";
+  String token ="";
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() =>
+      this._prefs=prefs);
+      _loadUserId();
+
+    }
+    );
+    log("myToken");
+    log(token);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as SearrchSurveyArgs;
@@ -35,7 +53,7 @@ class _SurveyState extends State<Survey> {
         children: <Widget>[
           Expanded(
     child:  FutureBuilder(
-      future: mySurveyApi().get_survey(args.companyCode, args.passNumber, args.policyNumber, args.plateNumber, args.plateCharacter),
+      future: mySurveyApi().get_survey(args.companyCode, args.passNumber, args.policyNumber, args.plateNumber, args.plateCharacter,token),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               log("////////////////////");
@@ -70,7 +88,8 @@ class _SurveyState extends State<Survey> {
                               height: 5.0,
                             ),
                             Text(
-                              snapshot.data[index].reportedDate
+                           DateTime.parse(snapshot.data[index].reportedDate).day.toString()
++"/" + DateTime.parse(snapshot.data[index].reportedDate).month.toString()+"/" + DateTime.parse(snapshot.data[index].reportedDate).year.toString()
                               ,
                               style: TextStyle(
                                 fontSize: 16.0,
@@ -111,6 +130,13 @@ class _SurveyState extends State<Survey> {
         ],
       ),
     );
+  }
+  void _loadUserId(){
+    setState(() {
+      this.userId=this._prefs?.getString(userIDPrefKey)??"";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
+    });
   }
 
 

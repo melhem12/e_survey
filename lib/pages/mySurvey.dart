@@ -22,6 +22,7 @@ SharedPreferences? _prefs;
 static const String tokenPrefKey = 'token_pref';
 static const String userIDPrefKey = 'userId_pref';
 String userId="";
+String token ="";
   @override
  void  initState()
    {
@@ -45,7 +46,7 @@ void asyncMethod(String uId) async {
   // claims.add(c);
   // claims.add(d);
   setState(() async {
-    claims=  await mySurveyApi().get_data(uId);
+    claims=  await mySurveyApi().get_data(uId,token);
 
   });
 }
@@ -113,6 +114,8 @@ void asyncMethod(String uId) async {
 void _loadUserId(){
   setState(() {
     this.userId=this._prefs?.getString(userIDPrefKey)??"";
+    this.token=this._prefs?.getString(tokenPrefKey)??"";
+
   });
 }
 }

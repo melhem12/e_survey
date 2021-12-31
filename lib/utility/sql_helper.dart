@@ -54,12 +54,15 @@ class SQLHelper {
 
   }
 
-  // Read all items (journals)
+
+  // static Future<List<Map<String, dynamic>>> getDamaged() async {
+  //   final db = await SQLHelper.db();
+  //   return db.query('damaged', orderBy: "surveyDamagedPartDescription") ;
+  // }
   static Future<List<Map<String, dynamic>>> getDamaged() async {
     final db = await SQLHelper.db();
-    return db.query('damaged', orderBy: "surveyDamagedPartDescription") ;
+    return db.query('damaged') ;
   }
-
   // Read a single item by id
   // The app doesn't use this method but I put here in case you want to see it
   static Future<List<Map<String, dynamic>>> getByCode(int id) async {

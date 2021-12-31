@@ -12,6 +12,7 @@ import 'package:e_survey/pages/metPage.dart';
 import 'package:e_survey/service/PartMetApi.dart';
 import 'package:e_survey/service/constantsApi.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dataInputPersonalInformation.dart';
 import 'package:e_survey/utility/sql_helper.dart';
@@ -33,10 +34,14 @@ class _partsState extends State<parts> {
     String partDesc='';
     String damageDesc='';
     bool clicked= false;
-    late Future<List<PartGroup>> futurePartGroup;
-    late Future<List<Direction>> futureDirection;
-    late Future<List<Description>> futureDescription=Future.value([]);
-    late Future<List<PartsModel>> futureSavedParts=Future.value([]);
+    static const String tokenPrefKey = 'token_pref';
+    String token='';
+    SharedPreferences? _prefs;
+
+     Future<List<PartGroup>> futurePartGroup=Future.value([]);
+     Future<List<Direction>> futureDirection=Future.value([]);
+     Future<List<Description>> futureDescription=Future.value([]);
+     Future<List<PartsModel>> futureSavedParts=Future.value([]);
     int _radioVal = 25;
     List<PartsModel> pmList=[];
 
@@ -49,13 +54,21 @@ class _partsState extends State<parts> {
 
     @override
     void initState() {
-      futurePartGroup=ConstantsApi().get_part_group();
-      futureDescription=ConstantsApi().getDescription();
-    futureDirection=ConstantsApi().getDirection();
+      SharedPreferences.getInstance().then((prefs) {
+        setState(() => this._prefs = prefs);
+        _loadUserId();
+        futurePartGroup=ConstantsApi().get_part_group(token);
+
+        futureDescription=ConstantsApi().getDescription(token);
+        futureDirection=ConstantsApi().getDirection(token);
+        getDamaged(widget.carId.toString());
+      });
+
+
     print("/////////////");
       print(widget.carId);
 
-      getDamaged(widget.carId.toString());
+
     super.initState();
   }
   getDamaged(String carId) async{
@@ -64,7 +77,7 @@ class _partsState extends State<parts> {
     final data = await SQLHelper.getDamaged();
     if(data.toSet().isEmpty){
       print("emptyyyyyyyy");
-    futureSavedParts= PartMetApi().get_Damage_Parts(carId);
+    futureSavedParts= PartMetApi().get_Damage_Parts(carId,token);
     pmList= await futureSavedParts;
 
     for(var i  in pmList){
@@ -205,6 +218,8 @@ class _partsState extends State<parts> {
                                               List<Direction>> snapshot) {
                                         if (!snapshot.hasData)
                                           return CircularProgressIndicator();
+                                        print( snapshot.data![0].description);
+
                                         return DropdownButton<Direction>(
                                           items: snapshot.data!
                                               .map((dir) =>
@@ -221,7 +236,7 @@ class _partsState extends State<parts> {
                                           //   value: _brands==null?Brands(carBrandId: "carBrandId", carBrandDescription: "carBrandDescription"):_brands,
                                           value: _direction.code.isEmpty
                                               ? snapshot.data![0]
-                                              : snapshot.data![
+                                            :  snapshot.data![
                                           snapshot.data!.indexOf(_direction)],
                                           hint: Text("Select direction"),);
                                       });
@@ -256,7 +271,7 @@ class _partsState extends State<parts> {
                                   }
                                   //pd.show(max: 100, msg: 'Load Car  Parts');
                                   //_dialog.show(message: 'Loading...', type:  SimpleFontelicoProgressDialogType.normal );
-                              futureCarParts = PartMetApi().get_Car_Parts(_partGroup.code, widget.doors.toString(), widget.bodyType.toString(), _direction.code, partDesc);
+                              futureCarParts = PartMetApi().get_Car_Parts(_partGroup.code, widget.doors.toString(), widget.bodyType.toString(), _direction.code, partDesc,token);
                                 setState(() {
                                   isLoading = false;
                                 });
@@ -352,12 +367,6 @@ class _partsState extends State<parts> {
                                         height: 5.0,
                                       ),
 
-
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
                                           Text(
                                             snapshot.data[index].partDescription
                                             ,
@@ -367,39 +376,38 @@ class _partsState extends State<parts> {
                                             ),
                                           ),
 
-                                        ],
-                                      ),
-                                     Row(
-                                       mainAxisAlignment: MainAxisAlignment.end,
-                                       children: [
-                                      snapshot.data[index].metCount >0
-                                          ?  FlatButton(
-                                        color: Colors.lightBlue,
-                                        onPressed: () {
-                                          if(saved(snapshot.data[index].partId)) {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        MetPage(
-                                                            _partGroup.code,
-                                                            widget.doors
-                                                                .toString(),
-                                                            widget.bodyType
-                                                                .toString(),
-                                                            snapshot
-                                                                .data[index]
-                                                                .partId)
-                                                ));
-                                          }
-                                        },
-                                        child: Text('MET',
-                                            style: TextStyle(color: Colors.white, fontSize: 16)),
-                                      )
-                                          :Text(""),
 
-                                    ]
-
-                                     ),
+                                    //  Row(
+                                    //    mainAxisAlignment: MainAxisAlignment.end,
+                                    //    children: [
+                                    //   snapshot.data[index].metCount >0
+                                    //       ?  FlatButton(
+                                    //     color: Colors.lightBlue,
+                                    //     onPressed: () {
+                                    //       if(saved(snapshot.data[index].partId)) {
+                                    //         Navigator.of(context).push(
+                                    //             MaterialPageRoute(
+                                    //                 builder: (context) =>
+                                    //                     MetPage(
+                                    //                         _partGroup.code,
+                                    //                         widget.doors
+                                    //                             .toString(),
+                                    //                         widget.bodyType
+                                    //                             .toString(),
+                                    //                         snapshot
+                                    //                             .data[index]
+                                    //                             .partId)
+                                    //             ));
+                                    //       }
+                                    //     },
+                                    //     child: Text('MET',
+                                    //         style: TextStyle(color: Colors.white, fontSize: 16)),
+                                    //   )
+                                    //       :Text(""),
+                                    //
+                                    // ]
+                                    //
+                                    //  ),
                                       // SizedBox(
                                       //   height: 5.0,
                                       // ),
@@ -686,8 +694,22 @@ setState(() {
       _refreshData();
     }
 
+    void _loadUserId() {
+      setState(() {
+        this.token=this._prefs?.getString(tokenPrefKey)??"";
 
+      });
+    }
+    Future<String> showToken() async {
+      var sharedPreferences = await SharedPreferences.getInstance();
+    token=  sharedPreferences.getString(tokenPrefKey).toString();
+      print("hiii");
+      setState(() {
 
+      });
+      return token;
+
+    }
     var  _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     Random _rnd = Random();
 

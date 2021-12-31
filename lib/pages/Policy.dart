@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:e_survey/utility/widgets.dart';
@@ -146,6 +147,7 @@ class _PolicyState extends State<Policy> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() => this._imageFile = File(pickedFile.path));
+      log(pickedFile.path);
       _setStringPref(pickedFile.path);
     }
   }

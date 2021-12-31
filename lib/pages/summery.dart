@@ -13,7 +13,6 @@ import 'package:e_survey/utility/sql_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Summery extends StatefulWidget {
@@ -38,6 +37,7 @@ class _SummeryState extends State<Summery> {
   late Future<List<PartsModel>> futureSavedParts = Future.value([]);
   SharedPreferences? _prefs;
   static const String tokenPrefKey = 'token_pref';
+  String token='';
   late Position _position;
   static const String frontLicencePrefKey = 'front_licence_pref';
   static const String userIDPrefKey = 'userId_pref';
@@ -75,7 +75,7 @@ class _SummeryState extends State<Summery> {
   getDamaged(String carId) async {
     final data = await SQLHelper.getDamaged();
     if (data.toSet().isEmpty) {
-      futureSavedParts = PartMetApi().get_Damage_Parts(carId);
+      futureSavedParts = PartMetApi().get_Damage_Parts(carId,token);
       pmList = await futureSavedParts;
 
       for (var i in pmList) {
@@ -126,11 +126,12 @@ class _SummeryState extends State<Summery> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(widget.fName.toString() +
+                    Text("Client Name :"+widget.fName.toString() +
                         " " +
-                        widget.fName.toString() +
+                        widget.fatherName.toString() +
                         " " +
                         widget.lName.toString()),
+
                   ],
                 ),
               ),
@@ -139,8 +140,17 @@ class _SummeryState extends State<Summery> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(widget.brand.toString() +
-                        ", " +
+                    Text(" Car Maker : "+widget.brand.toString() ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Car Model : "+
+
                         widget.tradeMark.toString()),
                   ],
                 ),
@@ -338,9 +348,9 @@ class _SummeryState extends State<Summery> {
                                     ),
                               ).then((returnVal) async {
                                 if (returnVal == "yes") {
-                                  bool finished=await PartMetApi().finishSuvey(userId,widget.carId.toString());
+                                  bool finished=await PartMetApi().finishSuvey(userId,widget.carId.toString(),token);
                                   if(finished)  {
-                                    PartMetApi().insertRequestStatus(userId, widget.carId.toString(), "finish", _position.longitude.toString(), _position.latitude.toString());
+                                    PartMetApi().insertRequestStatus(userId, widget.carId.toString(), "finish", _position.longitude.toString(), _position.latitude.toString(),token);
 
                                     ScaffoldMessenger.of(
                                         context)
@@ -461,35 +471,35 @@ class _SummeryState extends State<Summery> {
         userId,
       ));
     }
- PartMetApi().insertRequestStatus(userId, widget.carId.toString(), "save", _position.longitude.toString(), _position.latitude.toString());
-    PartMetApi().addDamagePart(damageList, widget.carId.toString());
+ PartMetApi().insertRequestStatus(userId, widget.carId.toString(), "save", _position.longitude.toString(), _position.latitude.toString(),token);
+    PartMetApi().addDamagePart(damageList, widget.carId.toString(),token);
     if (savedFrontLicense.isNotEmpty) {
       PartMetApi()
-          .uploadImage(savedFrontLicense, widget.notification.toString());
+          .uploadImage(savedFrontLicense, widget.notification.toString(),token);
     }
     if (savedBackLicense.isNotEmpty) {
       PartMetApi()
-          .uploadImage(savedBackLicense, widget.notification.toString());
+          .uploadImage(savedBackLicense, widget.notification.toString(),token);
     }
     if (savedBackCarRegistration.isNotEmpty) {
       PartMetApi()
-          .uploadImage(savedBackCarRegistration, widget.notification.toString());
+          .uploadImage(savedBackCarRegistration, widget.notification.toString(),token);
     }
     if (savedFrontCarRegistration.isNotEmpty) {
       PartMetApi()
-          .uploadImage(savedFrontCarRegistration, widget.notification.toString());
+          .uploadImage(savedFrontCarRegistration, widget.notification.toString(),token);
     }
     if (savedVin.isNotEmpty) {
       PartMetApi()
-          .uploadImage(savedVin, widget.notification.toString());
+          .uploadImage(savedVin, widget.notification.toString(),token);
     }
     if (savedPolicy.isNotEmpty) {
       PartMetApi()
-          .uploadImage(savedPolicy, widget.notification.toString());
+          .uploadImage(savedPolicy, widget.notification.toString(),token);
     }
     if (paths.isNotEmpty) {
       for (var path in paths) {
-        PartMetApi().uploadImage(path, widget.notification.toString());
+        PartMetApi().uploadImage(path, widget.notification.toString(),token);
       }
     }
   }
@@ -507,6 +517,8 @@ class _SummeryState extends State<Summery> {
   void _loadUserId() {
     setState(() {
       this.userId = this._prefs?.getString(userIDPrefKey) ?? "";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
     });
   }
 

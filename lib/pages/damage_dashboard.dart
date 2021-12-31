@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:e_survey/args/BigArgs.dart';
@@ -10,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
+
 class DamageDashboard extends StatefulWidget {
   const DamageDashboard({Key? key}) : super(key: key);
 
@@ -18,127 +20,127 @@ class DamageDashboard extends StatefulWidget {
 }
 
 class _DamageDashboardState extends State<DamageDashboard> {
-  String savedBacktLicense ="";
+  String savedBacktLicense = "";
   static const String userIDPrefKey = 'userId_pref';
   SharedPreferences? _prefs;
-  String userId="";
+  String userId = "";
   @override
   void initState() {
-
     SharedPreferences.getInstance().then((prefs) {
-      setState(() =>
-      this._prefs=prefs);
+      setState(() => this._prefs = prefs);
       _loadUser();
-
     });
 
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-
-    final args =ModalRoute.of(context)!.settings.arguments as BigArgs;
-    log("nnnnnnnnnnn") ;
+    final args = ModalRoute.of(context)!.settings.arguments as BigArgs;
+    log("nnnnnnnnnnn");
     log(args.carId);
-    log("nnnnnnnnnnn") ;
+    log("nnnnnnnnnnn");
     var drawerHeader = UserAccountsDrawerHeader(
-        accountName: Text(userId),
-        accountEmail: Text(userId),
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Icon(Icons.person ,size: 65,color: Colors.blue,),
-        ),);
+      accountName: Text(userId),
+      accountEmail: Text(userId),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.white,
+        child: Icon(
+          Icons.person,
+          size: 65,
+          color: Colors.blue,
+        ),
+      ),
+    );
     final drawerItems = ListView(
       children: <Widget>[
         drawerHeader,
         ListTile(
-            title:  Row(
+            title: Row(
               children: <Widget>[
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 Icon(Icons.home),
                 Text('Home'),
-
               ],
             ),
+            onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (BuildContext context) => Home()),
+                (Route<dynamic> route) => false)
+            //Navigator.push(context,MaterialPageRoute(builder: (context) => Home() ))
 
-            onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home() ))
-
-        ),
+            ),
         ListTile(
-            title:  Row(
+            title: Row(
               children: <Widget>[
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 Icon(Icons.exit_to_app),
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 Text('Logout'),
-
               ],
             ),
-
             onTap: () async => {
-              await   _prefs!.clear(),
+                  await _prefs!.clear(),
 //Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>Signin())),
-              Navigator.of(context)
-                  .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Signin()), (Route<dynamic> route) => false)
-              //    Navigator.of(context).popUntil(ModalRoute.withName('/'))
-            }
-        ),
-
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => Signin()),
+                      (Route<dynamic> route) => false)
+                  //    Navigator.of(context).popUntil(ModalRoute.withName('/'))
+                }),
       ],
     );
-    return   Scaffold(
+    return Scaffold(
       drawer: Drawer(
         child: drawerItems,
       ),
-      body:
-      Container(
+      body: Container(
           height: double.infinity,
           width: double.infinity,
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
           margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
-
-          child:Column(
-
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
-
-                flex: 3, child:   Text("Survey Damage  Details ",
-                  style: GoogleFonts.pacifico(
-                      fontWeight: FontWeight.bold, fontSize: 40, color: Colors.blue)),
+                flex: 3,
+                child: Text("Survey Damage  Details ",
+                    style: GoogleFonts.pacifico(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40,
+                        color: Colors.blue)),
               ),
               Expanded(
-                flex:10,
+                flex: 10,
                 child: GridView.count(
                   crossAxisCount: 2,
-
                   padding: EdgeInsets.all(3.0),
                   children: <Widget>[
-
                     // Text(""),
-                    makeDashboardItem2("Add Damage Part ", Icons.car_repair,"/parts",context,args.carId,args.doors,args.bodyType),
-                    makeDashboardItem2("uploads Photos", Icons.camera,"/damagePictures",context,'','',''),
-
+                    makeDashboardItem2(
+                        "Add Damage Part ",
+                        Icons.car_repair,
+                        "/parts",
+                        context,
+                        args.carId,
+                        args.doors,
+                        args.bodyType,onGoBack("")),
+                    makeDashboardItem2("uploads Photos", Icons.camera,
+                        "/damagePictures", context, '', '', '',onGoBack("")),
 
                     //makeDashboardItem("", Icons.task,"/",context),
-
                   ],
                 ),
               ),
-
-
-
-
-
-
-
               Expanded(
                 flex: 1,
-                child:
-
-
-                Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Expanded(
@@ -151,15 +153,12 @@ class _DamageDashboardState extends State<DamageDashboard> {
                               size: 30,
                             ),
                             onPressed: () {
-
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
                                 primary: Colors.blue,
                                 textStyle: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight:
-                                    FontWeight.bold)),
+                                    fontSize: 30, fontWeight: FontWeight.bold)),
                           ),
                         )),
                     SizedBox(
@@ -177,44 +176,41 @@ class _DamageDashboardState extends State<DamageDashboard> {
                               color: Colors.white,
                               size: 30,
                             ),
-                            onPressed: ()  {
-                              Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => Summery(args.carId,args.fName, args.fatherName,args.lName,args.brand,args.tradeMark,args.companyCode,args.notification,args.notificationId))
-                              );
-
-                            }
-                            ,
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Summery(
+                                          args.carId,
+                                          args.fName,
+                                          args.fatherName,
+                                          args.lName,
+                                          args.brand,
+                                          args.tradeMark,
+                                          args.companyCode,
+                                          args.notification,
+                                          args.notificationId)));
+                            },
                             style: ElevatedButton.styleFrom(
                                 primary: Colors.blue,
                                 textStyle: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight:
-                                    FontWeight.bold)),
+                                    fontSize: 30, fontWeight: FontWeight.bold)),
                           ),
                         ))
-
                   ],
                 ),
               )
-
-
-
-
-            ]
-
-            ,)
-
-
-      ),
-
-
-
+            ],
+          )),
     );
   }
-  void _loadUser(){
-    setState(() {
-      this.userId=this._prefs?.getString(userIDPrefKey)??"";
 
+    void _loadUser() {
+    setState(() {
+      this.userId = this._prefs?.getString(userIDPrefKey) ?? "";
     });
+  }
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
   }
 }

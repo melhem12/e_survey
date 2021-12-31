@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+//import 'dart:html';
 
 import 'package:e_survey/Models/CarParts.dart';
 import 'package:e_survey/Models/CarsSurveyDamagedPartsBean.dart';
@@ -16,9 +17,15 @@ class PartMetApi{
   List<PartsModel> parts = [];
   List<CarParts> carparts = [];
   List<Met> mets = [];
-  Future<List<PartsModel>> get_Damage_Parts(String carId ) async {
+  Future<List<PartsModel>> get_Damage_Parts(String carId , String token) async {
      parts=[];
-    var response = await   http.get(Uri.parse(AppUrl.getAllDamagedParts+"carId="+carId));
+    var response = await   http.get(Uri.parse(AppUrl.getAllDamagedParts+"carId="+carId),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+
+        });
 
 
     if (response.statusCode == 200) {
@@ -47,10 +54,16 @@ class PartMetApi{
   }
 
 
-  Future<List<CarParts>> get_Car_Parts(String partSubgroup,String doors,String bodyType,String direction,String description ) async {
+  Future<List<CarParts>> get_Car_Parts(String partSubgroup,String doors,String bodyType,String direction,String description ,String token ) async {
 
     carparts=[];
-    var response = await  http.get(Uri.parse(AppUrl.getCarParts+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&direction="+direction+"&description="+description)).timeout(Duration(seconds: 100));
+    var response = await  http.get(Uri.parse(AppUrl.getCarParts+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&direction="+direction+"&description="+description),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+
+        }).timeout(Duration(seconds: 100));
     if (response.statusCode == 200) {
       final extractedData = json.decode(response.body)['carPartBeanList'];
       log(extractedData.toString());
@@ -76,10 +89,14 @@ class PartMetApi{
 
 
 
-  Future<List<Met>> get_Car_met(String partSubgroup,String doors,String bodyType,String partId ) async {
+  Future<List<Met>> get_Car_met(String partSubgroup,String doors,String bodyType,String partId ,String token) async {
     mets=[];
 
-    var response = await  http.get(Uri.parse(AppUrl.getPartMet+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&partId="+partId)).timeout(Duration(seconds: 100));
+    var response = await  http.get(Uri.parse(AppUrl.getPartMet+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&partId="+partId),  headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    }).timeout(Duration(seconds: 100));
     if (response.statusCode == 200) {
       final extractedData = json.decode(response.body)['partMetBeanList'];
       log(extractedData.toString());
@@ -105,46 +122,51 @@ class PartMetApi{
 
 
 
-  Future<void> getPartTest(String partSubgroup,String doors,String bodyType,String direction,String description) async {
-    var httpClient = io.HttpClient();
+  // Future<void> getPartTest(String partSubgroup,String doors,String bodyType,String direction,String description,String token) async {
+  //   var httpClient = io.HttpClient();
+  //
+  //   var request = await httpClient.getUrl(Uri.parse(AppUrl.getCarParts+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&direction="+direction+"&description="+description));
+  //   try {
+  //     var response = await request
+  //         .close()
+  //         .then(
+  //           (r) async =>{
+  //         print( await utf8.decodeStream(r))
+  //
+  //           }
+  //     )
+  //         .timeout(
+  //       const Duration(seconds: 60),
+  //     );
+  //
+  //
+  //   } on TimeoutException catch (_) {
+  //     print('Timed out');
+  //     request.abort();
+  //   }
+  //
+  // }
 
-    var request = await httpClient.getUrl(Uri.parse(AppUrl.getCarParts+"partSubgroup="+partSubgroup+"&doors="+doors+"&bodyType="+bodyType+"&direction="+direction+"&description="+description));
-    try {
-      var response = await request
-          .close()
-          .then(
-            (r) async =>{
-          print( await utf8.decodeStream(r))
-
-            }
-      )
-          .timeout(
-        const Duration(seconds: 60),
-      );
 
 
-    } on TimeoutException catch (_) {
-      print('Timed out');
-      request.abort();
-    }
-
-  }
-
-
-
-  Future uploadImage(String filename,String notication) async {
+  Future uploadImage(String filename,String notication,String token) async {
   var request = http.MultipartRequest('POST', Uri.parse(AppUrl.sendImage+"/"+notication));
   request.files.add(
   await http.MultipartFile.fromPath(
   'file',
-  filename
+  filename,
   )
   );
+  request.headers.addAll({
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token'});
+
   var res = await request.send();
 }
 
 
-  Future<bool> addDamagePart( List<CarsSurveyDamagedPartsBean> damagedParts,String carId) async {
+  Future<bool> addDamagePart( List<CarsSurveyDamagedPartsBean> damagedParts,String carId,String token) async {
    // log(damagedParts[0].surveyDamagedSeverity.toString());
 
     Map<String,dynamic> req_body = new Map<String,dynamic>();
@@ -153,7 +175,11 @@ class PartMetApi{
     log(req_body.toString());
     final response = await post(
         Uri.parse(AppUrl.addDamagePart),
-        headers: {'Content-Type': 'application/json'},
+        headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token',
+    },
         body: jsonEncode(req_body));
     if (response.statusCode == 200) {
       return true;
@@ -161,9 +187,14 @@ class PartMetApi{
       return false;
     }
   }
-  Future<bool> finishSuvey( String userId,String carId) async {
+  Future<bool> finishSuvey( String userId,String carId,String token) async {
 
-    final response = await get(Uri.parse(AppUrl.finishSurvey+"?carId="+carId+"&userId="+userId));
+    final response = await get(Uri.parse(AppUrl.finishSurvey+"?carId="+carId+"&userId="+userId),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
     if (response.statusCode == 200) {
       return true;
     }else{
@@ -171,7 +202,7 @@ class PartMetApi{
     }
   }
 
-  Future<bool> insertRequestStatus( String userId,String carId,String typology,String longitude,String latitude) async {
+  Future<bool> insertRequestStatus( String userId,String carId,String typology,String longitude,String latitude,String token) async {
 
     Map<String,dynamic> req_body = new Map<String,dynamic>();
     req_body['carId']=carId;
@@ -181,8 +212,11 @@ class PartMetApi{
     req_body['latitude']= latitude;
     log(req_body.toString());
     final response = await post(
-        Uri.parse(AppUrl.insertRequestStatus),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse(AppUrl.insertRequestStatus,),
+        headers: {'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token',
+        },
         body: jsonEncode(req_body));
     if (response.statusCode == 200) {
       return true;

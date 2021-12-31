@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:e_survey/Models/CarDetailsModel.dart';
 import 'package:e_survey/Models/gender.dart';
-import 'package:e_survey/args/personalInfoArgs.dart';
 import 'package:e_survey/pages/dataInputCarInformation.dart';
 import 'package:e_survey/service/carDetailsApi.dart';
 import 'package:e_survey/service/constantsApi.dart';
 import 'package:e_survey/service/updatingInformationService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataInputPersonalInformation extends StatefulWidget {
@@ -38,7 +39,7 @@ double height = 15;
 class _DataInputPersonalInformationState extends State<DataInputPersonalInformation> {
   late Future<List<Gender>> futureGender;
 
-  late Future myFuture;
+  late Future myFuture= Future(() => null);
 
   CarDetailsModel carDetailsModel = CarDetailsModel();
 
@@ -61,16 +62,22 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
   late Gender _gender = Gender(genderId: '', genderDescription: '');
   static const String userIDPrefKey = 'userId_pref';
   String savedUid = "";
+  static const String tokenPrefKey = 'token_pref';
+  String token ="";
   @override
   void initState() {
 
     SharedPreferences.getInstance().then((prefs) {
       setState(() => this._prefs = prefs);
       _loadUserId();
-    });
+      log(token);
+      myFuture = carDetailsApi().getCarDetails(widget.carId, widget.companyCode,token);
+
+    }
+    );
+
     log("////////////////????????????????");
-    myFuture = carDetailsApi().getCarDetails(widget.carId, widget.companyCode);
-    futureGender = ConstantsApi().get_genders();
+   // futureGender = ConstantsApi().get_genders(token);
     super.initState();
   }
   // getGenderObject() async {
@@ -180,10 +187,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
 
 
 
-                                  enabled: widget.vehicleNumber == "0"&&!(snapshot.data.carOwnerFirstName ==
-                                      "null" ||
-                                      snapshot
-                                          .data.carOwnerFirstName.isEmpty)
+                                  enabled: widget.vehicleNumber == "0"
                                       ? false
                                       : true,
                                   validator: (value) {
@@ -362,108 +366,117 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                     filled: true,
                                   ),
                                 ),
-                                SizedBox(
-                                  height: height,
-                                ),
-                                Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Text("Gender ",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey,
-                                          )),
 
 
 
+                                
+                                // SizedBox(
+                                //   height: height,
+                                // ),
+                                // Container(
+                                //   child: Column(
+                                //     children: <Widget>[
+                                //       Text("Gender ",
+                                //           style: TextStyle(
+                                //             fontSize: 14,
+                                //             color: Colors.grey,
+                                //           )),
+                                //
+                                //
+                                //
+                                //
+                                //       StatefulBuilder(builder:
+                                //           (BuildContext context,
+                                //               StateSetter setState) {
+                                //         return FutureBuilder<List<Gender>>(
+                                //             future: futureGender,
+                                //             builder: (BuildContext context,
+                                //                 AsyncSnapshot<List<Gender>>
+                                //                     snapshot) {
+                                //               if (!snapshot.hasData)
+                                //                 return Center(
+                                //                   child: CircularProgressIndicator()
+                                //                   ,
+                                //                 );;
+                                //               return DropdownButton<Gender>(
+                                //
+                                //                 items: snapshot.data!
+                                //                     .map((gender) =>
+                                //                         DropdownMenuItem<
+                                //                             Gender>(
+                                //                           enabled: widget.vehicleNumber == "0"
+                                //                               ? false
+                                //                               : true,
+                                //                           child: Text(gender
+                                //                               .genderDescription),
+                                //                           value: gender,
+                                //                         ))
+                                //                     .toList(),
+                                //                 onChanged: (Gender? value) {
+                                //                   log(value!.genderDescription);
+                                //
+                                //                   setState(
+                                //                       () => _gender = value);
+                                //                 },
+                                //                 isExpanded: true,
+                                //                 value: _gender.genderId.isEmpty
+                                //                     ? null
+                                //                     : snapshot.data![
+                                //                 snapshot.data!.indexOf(_gender)],
+                                //                 hint: new Text("Select gender"),
+                                //               );
+                                //             });
+                                //       }
+                                //       ),
+                                //
+                                //
+                                //
+                                //
+                                //     ],
+                                //   ),
+                                // ),
 
-                                      StatefulBuilder(builder:
-                                          (BuildContext context,
-                                              StateSetter setState) {
-                                        return FutureBuilder<List<Gender>>(
-                                            future: futureGender,
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<List<Gender>>
-                                                    snapshot) {
-                                              if (!snapshot.hasData)
-                                                return Center(
-                                                  child: CircularProgressIndicator()
-                                                  ,
-                                                );;
-                                              return DropdownButton<Gender>(
-
-                                                items: snapshot.data!
-                                                    .map((gender) =>
-                                                        DropdownMenuItem<
-                                                            Gender>(
-                                                          enabled: widget.vehicleNumber == "0"
-                                                              ? false
-                                                              : true,
-                                                          child: Text(gender
-                                                              .genderDescription),
-                                                          value: gender,
-                                                        ))
-                                                    .toList(),
-                                                onChanged: (Gender? value) {
-                                                  log(value!.genderDescription);
-
-                                                  setState(
-                                                      () => _gender = value);
-                                                },
-                                                isExpanded: true,
-                                                value: _gender.genderId.isEmpty
-                                                    ? null
-                                                    : snapshot.data![
-                                                snapshot.data!.indexOf(_gender)],
-                                                hint: new Text("Select gender"),
-                                              );
-                                            });
-                                      }),
 
 
+                                // SizedBox(
+                                //   height: height,
+                                // ),
+                                // TextField(
+                                //   enabled: widget.vehicleNumber == "0"
+                                //       ? false
+                                //       : true,
+                                //   style: TextStyle(
+                                //     color: Colors.blue,
+                                //   ),
+                                //   focusNode: AlwaysDisabledFocusNode(),
+                                //   controller: _textEditingdobController,
+                                //   onTap: () {
+                                //     _selectDate(context,
+                                //         _textEditingdobController, dob!);
+                                //   },
+                                //   decoration: InputDecoration(
+                                //     labelText: 'Date of Birth',
+                                //     isDense: true,
+                                //     labelStyle: TextStyle(
+                                //       color: Colors.blue,
+                                //     ),
+                                //     hintText: "Enter Date of Birth",
+                                //     hintStyle: TextStyle(
+                                //       color: Colors.blue,
+                                //     ),
+                                //     suffixIcon:
+                                //         Icon(Icons.calendar_today_outlined),
+                                //     fillColor: Colors.grey[300],
+                                //     border: InputBorder.none,
+                                //     focusedBorder: UnderlineInputBorder(
+                                //       borderSide: BorderSide(
+                                //           color:
+                                //               Colors.blue),
+                                //     ),
+                                //     filled: true,
+                                //   ),
+                                // ),
 
-
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: height,
-                                ),
-                                TextField(
-                                  enabled: widget.vehicleNumber == "0"
-                                      ? false
-                                      : true,
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                  ),
-                                  focusNode: AlwaysDisabledFocusNode(),
-                                  controller: _textEditingdobController,
-                                  onTap: () {
-                                    _selectDate(context,
-                                        _textEditingdobController, dob!);
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: 'Date of Birth',
-                                    isDense: true,
-                                    labelStyle: TextStyle(
-                                      color: Colors.blue,
-                                    ),
-                                    hintText: "Enter Date of Birth",
-                                    hintStyle: TextStyle(
-                                      color: Colors.blue,
-                                    ),
-                                    suffixIcon:
-                                        Icon(Icons.calendar_today_outlined),
-                                    fillColor: Colors.grey[300],
-                                    border: InputBorder.none,
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              Colors.blue),
-                                    ),
-                                    filled: true,
-                                  ),
-                                ),
                                 SizedBox(
                                   height: height,
                                 ),
@@ -743,7 +756,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
                                                           snapshot
                                                               .data.vehicleNumber,
                                                           snapshot.data
-                                                              .policyNumber,firstNameController.text,fatherNameController.text,lastNameController.text,widget.companyCode.toString(),widget.notification.toString())
+                                                              .policyNumber,firstNameController.text,fatherNameController.text,lastNameController.text,widget.companyCode.toString(),widget.notification.toString(),snapshot.data.insuranceCompanyId,snapshot.data.policyType)
                                                   ));
 
 
@@ -804,6 +817,7 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
   }
 
 
+
   _selectDate(
       BuildContext context,
       TextEditingController _textEditingController,
@@ -845,20 +859,22 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
   void _loadUserId() {
     setState(() {
       this.savedUid = this._prefs?.getString(userIDPrefKey) ?? "";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
     });
   }
 
-
+  Future<bool> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId,String gender ) async {
+    bool updated  = await updatingInformationService().update( carId, carOwnerFirstName, carOwnerFamilyName, carOwnerFatherName, licenseDate, licenseExpiryDate, phoneNumber, licenseNumber, userId, gender,token);
+    return updated;
+  }
 }
-bool checkLicenseDate(){
+// bool checkLicenseDate(){
+//
+//   return true;
+// }
 
-  return true;
-}
 
-Future<bool> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId,String gender ) async {
-bool updated  = await updatingInformationService().update( carId, carOwnerFirstName, carOwnerFamilyName, carOwnerFatherName, licenseDate, licenseExpiryDate, phoneNumber, licenseNumber, userId, gender);
-return updated;
-}
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override

@@ -29,7 +29,8 @@ class CarDetailsModel{
   late String   vehicleNumber     ;
   late String   policyNumber     ;
   late String  lossDate    ;
-
+ late String  insuranceCompanyId;
+  late String  policyType;
   CarDetailsModel();
 
 // CarDetailsModel(

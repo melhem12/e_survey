@@ -17,9 +17,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   SharedPreferences? _prefs;
   static const String tokenPrefKey = 'token_pref';
+
   static const String userIDPrefKey = 'userId_pref';
   String userId="";
-
+String token ='';
   @override
   void  initState()
   {
@@ -35,8 +36,9 @@ class _HomeState extends State<Home> {
       // ModalRoute.withName('/'),);
       }
     });
+print("testtokn................>>>>>>>>>>");
 
-
+print(token);
     super.initState();
   }
 
@@ -153,6 +155,8 @@ class _HomeState extends State<Home> {
   void _loadUserId(){
     setState(() {
       this.userId=this._prefs?.getString(userIDPrefKey)??"";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
     });
   }
 }

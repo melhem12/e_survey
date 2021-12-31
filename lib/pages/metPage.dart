@@ -7,6 +7,7 @@ import 'package:e_survey/service/PartMetApi.dart';
 import 'package:e_survey/service/constantsApi.dart';
 import 'package:e_survey/utility/sql_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class MetPage extends StatefulWidget {
 
   final String partSubgroup;
@@ -22,6 +23,10 @@ final String partId;
 
 
 class _MetPageState extends State<MetPage> {
+  static const String tokenPrefKey = 'token_pref';
+  String token='';
+  SharedPreferences? _prefs;
+
   late  Future <List<Met>> futureMet= Future.value([]);
   String damageDesc='';
   late Future<List<Description>> futureDescription=Future.value([]);
@@ -31,9 +36,13 @@ class _MetPageState extends State<MetPage> {
   List<PartsModel> mList=[];
   @override
   void initState() {
-    futureDescription=ConstantsApi().getDescription();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() => this._prefs = prefs);
+      _loadUserId();
+    });
+    futureDescription=ConstantsApi().getDescription(token);
     getDesc();
-    futureMet = PartMetApi().get_Car_met(widget.partSubgroup.toString(),widget.doors.toString(), widget.bodyType.toString(), widget.partId.toString());
+    futureMet = PartMetApi().get_Car_met(widget.partSubgroup.toString(),widget.doors.toString(), widget.bodyType.toString(), widget.partId.toString(),token);
     _refreshData();
     super.initState();
 
@@ -377,6 +386,12 @@ class _MetPageState extends State<MetPage> {
     SQLHelper.deleteByCode(code);
     _refreshData();
 
+  }
+  void _loadUserId() {
+    setState(() {
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
+    });
   }
   var  _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random _rnd = Random();

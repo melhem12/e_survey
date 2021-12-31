@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:e_survey/Models/InsuranceCompany.dart';
+import 'package:e_survey/Models/PolicyType.dart';
 import 'package:e_survey/Models/body_type.dart';
 import 'package:e_survey/Models/brand.dart';
 import 'package:e_survey/Models/car_trade_mark.dart';
@@ -21,38 +23,49 @@ List<PartGroup> partGroups=[];
 List<Direction> directions=[];
 List<Description> descriptions=[];
 List<CarTradeMark> carTradeMarks=[];
+List<PolicyType> policyTypes=[];
+List<InsuranceCompany> insuranceCompanies=[];
 
 class ConstantsApi{
-  Future<List<Gender>> get_genders() async {
+  // Future<List<Gender>> get_genders(String token) async {
+  //   log(token);
+  //   try {
+  //     Response response = await get(
+  //         Uri.parse(AppUrl.gendersList),  headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //       'Accept': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     });
+  //
+  //     genders = [];
+  //     final extractedData = json.decode(response.body);
+  //     if(extractedData != null) {
+  //       List companiesData = extractedData['genderBeanList'];
+  //       for (var i in companiesData) {
+  //         genders.add(Gender(
+  //           genderId: i["genderId"],
+  //           genderDescription: i['genderDescription'],
+  //         ));
+  //       }
+  //       //    print(companies);
+  //
+  //     }
+  //
+  //   }catch( e ){
+  //     print('error=$e');
+  //     throw Exception(e.toString());
+  //   }
+  //
+  //   return genders;
+  // }
+  Future<List<Doors>> get_doors(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.gendersList));
-
-      genders = [];
-      final extractedData = json.decode(response.body);
-      if(extractedData != null) {
-        List companiesData = extractedData['genderBeanList'];
-        for (var i in companiesData) {
-          genders.add(Gender(
-            genderId: i["genderId"],
-            genderDescription: i['genderDescription'],
-          ));
-        }
-        //    print(companies);
-
-      }
-
-    }catch( e ){
-      print('error=$e');
-      throw Exception(e.toString());
-    }
-
-    return genders;
-  }
-  Future<List<Doors>> get_doors() async {
-    try {
-      Response response = await get(
-          Uri.parse(AppUrl.doors));
+          Uri.parse(AppUrl.doors) ,  headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
 
       doors = [];
       final extractedData = json.decode(response.body);
@@ -79,10 +92,14 @@ class ConstantsApi{
 
 
 
-  Future<List<BodyType>> get_body_types() async {
+  Future<List<BodyType>> get_body_types(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.bodyType));
+          Uri.parse(AppUrl.bodyType) , headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
 
       doors = [];
       final extractedData = json.decode(response.body);
@@ -108,10 +125,14 @@ class ConstantsApi{
 
 
 
-  Future<List<VehicleSize>> get_vehicle_size() async {
+  Future<List<VehicleSize>> get_vehicle_size(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.vehicleSize));
+          Uri.parse(AppUrl.vehicleSize),  headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
 
       vehicleSizes = [];
       final extractedData = json.decode(response.body);
@@ -137,10 +158,15 @@ class ConstantsApi{
 
 
 
-  Future<List<Brands>> get_brand() async {
+  Future<List<Brands>> get_brand(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.carBrand));
+          Uri.parse(AppUrl.carBrand),
+          headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      });
 
       vehicleSizes = [];
       final extractedData = json.decode(response.body);
@@ -165,10 +191,15 @@ class ConstantsApi{
   }
 
 
-  Future<List<Direction>> getDirection() async {
+  Future<List<Direction>> getDirection(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.directions));
+          Uri.parse(AppUrl.directions),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          });
 
       directions = [];
       final extractedData = json.decode(response.body);
@@ -192,10 +223,100 @@ class ConstantsApi{
     return directions;
   }
 
-  Future<List<Description>> getDescription() async {
+
+
+  Future<List<PolicyType>> getPolicyType(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.description));
+          Uri.parse(AppUrl.policyTypes),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          });
+
+      policyTypes = [];
+      final extractedData = json.decode(response.body);
+      if(extractedData != null) {
+        List data = extractedData['policyTypeResponseList'];
+        for (var i in data) {
+          policyTypes.add(PolicyType(
+            code: i["code"],
+            description: i['description'],
+          ));
+        }
+        //    print(companies);
+
+      }
+
+    }catch( e ){
+      print('error=$e');
+      throw Exception(e.toString());
+    }
+
+    return policyTypes;
+  }
+
+
+
+
+
+
+
+  Future<List<InsuranceCompany>> getCarInsuranceCompanies(String token) async {
+    try {
+      Response response = await get(
+          Uri.parse(AppUrl.insuranceCompanies),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          });
+
+      insuranceCompanies = [];
+      final extractedData = json.decode(response.body);
+      if(extractedData != null) {
+        List data = extractedData['insuranceCompanyResponseList'];
+        for (var i in data) {
+          insuranceCompanies.add(InsuranceCompany(
+            supplierId: i["supplierId"],
+            supplierName: i['supplierName'],
+          ));
+        }
+        //    print(companies);
+
+      }
+
+    }catch( e ){
+      print('error=$e');
+      throw Exception(e.toString());
+    }
+
+    return insuranceCompanies;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Future<List<Description>> getDescription(String token) async {
+    try {
+      Response response = await get(
+          Uri.parse(AppUrl.description),
+          headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      });
 
       descriptions = [];
       final extractedData = json.decode(response.body);
@@ -222,10 +343,15 @@ class ConstantsApi{
 
 
 
-  Future<List<PartGroup>> get_part_group() async {
+  Future<List<PartGroup>> get_part_group(String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.partGroup));
+          Uri.parse(AppUrl.partGroup),
+          headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      });
 
       partGroups = [];
       final extractedData = json.decode(response.body);
@@ -249,10 +375,15 @@ class ConstantsApi{
     return partGroups;
   }
 
-  Future<List<CarTradeMark>> getCarTradeMarkList(String carBrandId) async {
+  Future<List<CarTradeMark>> getCarTradeMarkList(String carBrandId,String token) async {
     try {
       Response response = await get(
-          Uri.parse(AppUrl.carTrademarkList+"?carBrandId="+carBrandId));
+          Uri.parse(AppUrl.carTrademarkList+"?carBrandId="+carBrandId),
+          headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      });
       carTradeMarks=[];
       final extractedData = json.decode(response.body);
       List data = extractedData['carTrademarkBeanList'];

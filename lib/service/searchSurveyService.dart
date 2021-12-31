@@ -6,7 +6,7 @@ import 'dart:convert';
 
 class searchSurveySErvice {
 
-  Future<String> get_count(String companyCode,String passNumber,String policynumber,String plateNumber,String plateCharacter) async {
+  Future<String> get_count(String companyCode,String passNumber,String policynumber,String plateNumber,String plateCharacter,String token) async {
     try {
       String counter ='0';
     //  var url =Server.eSurveySearchCountUri+ "?companyCode=" + item2
@@ -23,7 +23,11 @@ class searchSurveySErvice {
         url = url + "&plateCharacter=" + plateCharacter;
       }
       Response response = await get(
-          Uri.parse(url));
+          Uri.parse(url), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
 
 
       final extractedData = json.decode(response.body);

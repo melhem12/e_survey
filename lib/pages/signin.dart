@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:e_survey/utility/app_url.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_svg/svg.dart';
@@ -58,7 +60,8 @@ String savedUid ="";
      //data = json.decode(res.body);
     String uid=map['userId'];
     String tok =map['token'];
-    _setStringPref( uid,tok);
+    print(tok);
+    _setStringPref(uid,tok);
     Navigator.push(
         context, new MaterialPageRoute(builder: (context) => Home()));
   }
@@ -227,6 +230,7 @@ String savedUid ="";
     ));
   }
   Future<void> _setStringPref(String userId ,String token) async {
+
     await this._prefs?.setString(tokenPrefKey, token);
     await this._prefs?.setString(userIDPrefKey, userId);
   }

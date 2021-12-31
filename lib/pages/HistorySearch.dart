@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:e_survey/Models/HistoryModel.dart';
 import 'package:e_survey/Models/claimsResponse.dart';
 import 'package:e_survey/Models/company.dart';
 import 'package:e_survey/service/companyService.dart';
@@ -20,13 +21,18 @@ class _HistorySearchState extends State<HistorySearch> {
   DateTime? _selectedFromDate = DateTime.now();
   DateTime? _selectedToDate = DateTime.now();
   late Company _company = Company(companyId:0,companyName: '');
-
+String from ='';
+  String to ='';
   String userId="";
-  late Future<List<claimsResponse>> myFuture=Future.value([]);
+  static const String tokenPrefKey = 'token_pref';
+  String token ="";
+  late Future<List<HistoryModel>> myFuture=Future.value([]);
   TextEditingController _textEditingfromController =
   TextEditingController();
   TextEditingController _textEditingToController =
   TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   static const String userIDPrefKey = 'userId_pref';
   SharedPreferences? _prefs;
 @override
@@ -36,7 +42,8 @@ class _HistorySearchState extends State<HistorySearch> {
   this._prefs=prefs);
   _loadUser();
 
-});
+}
+);
 
   }
 
@@ -59,7 +66,10 @@ class _HistorySearchState extends State<HistorySearch> {
 
 
               padding: const EdgeInsets.all(16.0),
+    child: Form(
+    key: _formKey,
               child:
+
               Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,15 +92,10 @@ class _HistorySearchState extends State<HistorySearch> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Expanded(flex:2,child: Container(
-
-
                         margin: new EdgeInsets.symmetric(vertical: 10.0),
-
-
-
                         child :  FutureBuilder<List<Company>>(
 
-                            future: CompanyService().get_data(),
+                            future: CompanyService().get_data(token),
                             builder: (BuildContext context,
                                 AsyncSnapshot<List<Company>> snapshot) {
                               if (!snapshot.hasData) return CircularProgressIndicator();
@@ -121,11 +126,6 @@ class _HistorySearchState extends State<HistorySearch> {
 
 
 )
-
-
-
-
-
 
 
                       ),
@@ -259,7 +259,7 @@ class _HistorySearchState extends State<HistorySearch> {
                                           borderRadius: BorderRadius.circular(16.0)),
                                       onPressed: () async {
                                         log(passNumber!);
-                                        myFuture = mySurveyApi().searchHistory(userId, passNumber!, _textEditingfromController.text,_textEditingToController.text,_company.companyId.toString());
+                                        myFuture = mySurveyApi().searchHistory(userId, passNumber!, from,_textEditingToController.text.toString(),_company.companyId.toString(),token);
 
                                         // _dialog.hide();
                                         setState(() {
@@ -271,8 +271,6 @@ class _HistorySearchState extends State<HistorySearch> {
 
                                       ))
                               )
-
-
 
 
 
@@ -316,7 +314,7 @@ class _HistorySearchState extends State<HistorySearch> {
                                                       height: 5.0,
                                                     ),
                                                     Text(
-                                                      snapshot.data[index].reportedDate
+                                                      snapshot.data[index].surveyDate
                                                       ,
                                                       style: TextStyle(
                                                         fontSize: 16.0,
@@ -389,7 +387,7 @@ class _HistorySearchState extends State<HistorySearch> {
               ),
             ),
           ),
-        ),
+        ),),
       ));
   }
 
@@ -428,12 +426,16 @@ class _HistorySearchState extends State<HistorySearch> {
         ..selection = TextSelection.fromPosition(TextPosition(
             offset: _textEditingController.text.length,
             affinity: TextAffinity.upstream));
+      from=_textEditingController.text;
+      log(from);
+
     }
 
   }
   void _loadUser(){
     setState(() {
       this.userId=this._prefs?.getString(userIDPrefKey)??"";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
 
     });
   }

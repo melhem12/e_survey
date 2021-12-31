@@ -3,8 +3,14 @@ import 'package:e_survey/utility/app_url.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 class carDetailsApi{
-  Future<CarDetailsModel> getCarDetails(String carId,String companyCode) async{
-    var response= await http.get(Uri.parse(AppUrl.getCarDetails+"carId="+carId+"&companyCode="+companyCode));
+  Future<CarDetailsModel> getCarDetails(String carId,String companyCode,String token) async{
+    var response= await http.get(Uri.parse(AppUrl.getCarDetails+"carId="+carId+"&companyCode="+companyCode),
+        headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        }
+        );
     final carDetailsData = json.decode(response.body)['claimListCarDetailBean'];
     CarDetailsModel carDetailsModel =   CarDetailsModel();
 
@@ -39,7 +45,9 @@ class carDetailsApi{
     carDetailsModel.phoneNumber=carDetailsData[0]["phoneNumber"].toString();
     carDetailsModel.reportedDate=carDetailsData[0]["reportedDate"].toString();
     carDetailsModel.carOwnerFatherName=carDetailsData[0]["carOwnerFatherName"].toString();
-    
+
+    carDetailsModel.insuranceCompanyId=carDetailsData[0]["insuranceCompanyId"].toString();
+    carDetailsModel.policyType=carDetailsData[0]["policyType"].toString();
 
     return carDetailsModel;
   }

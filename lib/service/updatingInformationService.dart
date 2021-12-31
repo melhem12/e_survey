@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class updatingInformationService {
 
-  Future<bool> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId,String gender ) async {
+  Future<bool> update(String carId,String carOwnerFirstName,String carOwnerFamilyName,String carOwnerFatherName,String licenseDate,String licenseExpiryDate,String phoneNumber,String licenseNumber,String userId,String gender,String token ) async {
     var req_body = new Map();
 
     if(carId.isNotEmpty && carId !=null) {
@@ -41,7 +41,11 @@ class updatingInformationService {
     }
     final response = await post(
         Uri.parse(AppUrl.updateLossCarPersonalInformation),
-        headers: {'Content-Type': 'application/json'},
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
         body: jsonEncode(req_body));
     if (response.statusCode == 200) {
      return true;
@@ -51,7 +55,7 @@ class updatingInformationService {
   }
 
   Future<bool> updateCarInfo(String carId,String carBrandId,String carTradeMarkId,String carVehicleSize,String carBodyType,
-      String carDoors,String carYear,String carChasisNumber,String carPlate,String carPolicyNumber,String userId) async {
+      String carDoors,String carYear,String carChasisNumber,String carPlate,String carPolicyNumber,String userId,String token,String supplierID, String policyType) async {
     var req_body = new Map();
 
     if(carId.isNotEmpty && carId !=null) {
@@ -92,11 +96,20 @@ class updatingInformationService {
     if(userId.isNotEmpty && userId !=null) {
       req_body['userId'] = userId;
     }
-
+    if(supplierID.isNotEmpty && supplierID !=null) {
+      req_body['carInsuranceCompany'] = supplierID;
+    }
+    if(policyType.isNotEmpty && policyType !=null) {
+      req_body['carPolicyType'] = policyType;
+    }
 
     final response = await post(
         Uri.parse(AppUrl.updateLossCar),
-        headers: {'Content-Type': 'application/json'},
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
         body: jsonEncode(req_body));
     if (response.statusCode == 200) {
       return  true;

@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:e_survey/args/claimsListArgs.dart';
 import 'package:e_survey/args/mySurveyArgs.dart';
+import 'package:e_survey/pages/signin.dart';
 import 'package:e_survey/service/claimsApi.dart';
 import 'package:e_survey/utility/sql_helper.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dataInputPersonalInformation.dart';
+import 'home.dart';
 
 class ClaimsList extends StatefulWidget {
 String ?notification ;
@@ -22,7 +25,8 @@ String ?notificationId ;
 
 class _ClaimsListState extends State<ClaimsList> {
   SharedPreferences? _prefs;
-
+  static const String tokenPrefKey = 'token_pref';
+  String token='';
   static const String frontLicencePrefKey = 'front_licence_pref';
   static const String pathsListPrefKey = 'pathsList_pref';
   static const String backCarRegistrationrefKey = 'back_CarRegistration_pref';
@@ -30,22 +34,23 @@ class _ClaimsListState extends State<ClaimsList> {
   static const String policyPrefKey = 'policy_pref';
   static const String vinPrefKey = 'vin';
   static const String backLicencePrefKey = 'back_licence_pref';
-
-
   static const String userIDPrefKey = 'userId_pref';
   String savedUid = "";
 
   @override
   void initState() {
-    log("llllllllllll");
+    SharedPreferences.getInstance().then((  prefs) {
+      setState(() => this._prefs = prefs);
+      _loadUserId();
+      log(token);
+
+    });
+    log("testtoken");
     log(widget.notificationId.toString());
     log(widget.notification.toString());
     log(widget.companyCode.toString());
 
-    SharedPreferences.getInstance().then((prefs) {
-      setState(() => this._prefs = prefs);
-      _loadUserId();
-    });
+
     super.initState();
   }
 
@@ -53,29 +58,67 @@ class _ClaimsListState extends State<ClaimsList> {
   Widget build(BuildContext context) {
    // final args = ModalRoute.of(context)!.settings.arguments as mySurveyArgs;
 
-    return
 
 
-      Scaffold(
+    var drawerHeader = UserAccountsDrawerHeader(
+      accountName: Text(savedUid),
+      accountEmail: Text(savedUid),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.white,
+        child: Icon(Icons.person ,size: 65,color: Colors.blue,),
+      ),);
+    final drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        ListTile(
+            title:  Row(
+              children: <Widget>[
+                SizedBox(width: 5,),
+                Icon(Icons.home),
+                Text('Home'),
+
+              ],
+            ),
+
+            onTap: () =>
+                Navigator.of(context)
+                    .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Home()), (Route<dynamic> route) => false)
+                //Navigator.push(context,MaterialPageRoute(builder: (context) => Home() ))
+
+        ),
+        ListTile(
+            title:  Row(
+              children: <Widget>[
+                SizedBox(width: 5,),
+                Icon(Icons.exit_to_app),
+                SizedBox(width: 5,),
+                Text('Logout'),
+
+              ],
+            ),
+
+            onTap: () async => {
+              await   _prefs!.clear(),
+//Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>Signin())),
+              Navigator.of(context)
+                  .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context)=>Signin()), (Route<dynamic> route) => false)
+              //    Navigator.of(context).popUntil(ModalRoute.withName('/'))
+            }
+        ),
+
+      ],
+    );
+
+
+    return Scaffold(
+      drawer: Drawer(
+        child: drawerItems,
+
+      ),
       floatingActionButton: Container(
         margin: EdgeInsets.only(bottom: 50),
         child: FloatingActionButton(
-
-
           onPressed: () {
-
-
-
-
-
-
-
-
-
-
-
-
-
             showDialog<String>(
               context: context,
               builder: (BuildContext
@@ -105,12 +148,11 @@ class _ClaimsListState extends State<ClaimsList> {
                       ),
                     ],
                   ),
-            ).then((returnVal) {
+            ).then((returnVal) async {
               if (returnVal == "yes") {
 
+      String carId=  await _insertLossCar(widget.notification.toString(), savedUid);
 
-
-            _insertLossCar(widget.notification.toString(), savedUid);
                 ScaffoldMessenger.of(
                     context)
                     .showSnackBar(
@@ -122,19 +164,23 @@ class _ClaimsListState extends State<ClaimsList> {
                     //action: SnackBarAction(label: 'OK', onPressed: () {}),
                   ),
                 );
+
+
+              _insertCarsSurvey(carId, savedUid);
+              SQLHelper.deleteAll();
+              _prefs!.remove(policyPrefKey);
+              _prefs!.remove(vinPrefKey);
+              _prefs!.remove(frontCarRegistrationPrefKey);
+              _prefs!.remove(backCarRegistrationrefKey);
+              _prefs!.remove(frontLicencePrefKey);
+              _prefs!.remove(backLicencePrefKey);
+              _prefs!.remove(pathsListPrefKey);
+              _prefs!.remove("stringList");
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DataInputPersonalInformation( companyCode: widget.companyCode.toString(),carId: carId,vehicleNumber: '',notification:widget.notification.toString(),notificationId:widget.notificationId.toString())
+              )).then(onGoBack);
               }
             });
-
-
-
-
-
-
-
-
-
-
-
 
           },
           child: const Icon(Icons.add),
@@ -149,7 +195,7 @@ class _ClaimsListState extends State<ClaimsList> {
           Expanded(
               child: FutureBuilder(
                   future: claimsApi()
-                      .get_claims_details(widget.notificationId.toString(), widget.companyCode.toString()),
+                      .get_claims_details(widget.notificationId.toString(), widget.companyCode.toString(),token),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
@@ -173,7 +219,6 @@ class _ClaimsListState extends State<ClaimsList> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => DataInputPersonalInformation( companyCode: widget.companyCode.toString(),carId: snapshot.data[index].carId,vehicleNumber: snapshot.data[index].vehicleNumber,notification:widget.notification.toString(),notificationId:widget.notificationId.toString())
                                 ));
-
                                 }
                               },
                               child: Card(
@@ -184,6 +229,7 @@ class _ClaimsListState extends State<ClaimsList> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
+                                      Text(index.toString()),
                                       Text(
                                         snapshot.data[index].vehicleOwnerName,
                                         style: TextStyle(
@@ -202,16 +248,16 @@ class _ClaimsListState extends State<ClaimsList> {
                                           color: Colors.black,
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-                                      Text(
-                                        snapshot.data[index].accidentLocation,
-                                        style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black,
-                                        ),
-                                      ),
+                                      // SizedBox(
+                                      //   height: 5.0,
+                                      // ),
+                                      // Text(
+                                      //   snapshot.data[index].accidentLocation,
+                                      //   style: TextStyle(
+                                      //     fontSize: 16.0,
+                                      //     color: Colors.black,
+                                      //   ),
+                                      // ),
                                       SizedBox(
                                         height: 5.0,
                                       ),
@@ -302,11 +348,6 @@ class _ClaimsListState extends State<ClaimsList> {
                                                       }
                                                     });
 
-
-
-
-
-
                                                   },
                                                 ),
                                         ],
@@ -339,25 +380,30 @@ class _ClaimsListState extends State<ClaimsList> {
   }
 
   Future<bool> _deleteSuvey(String carId, String userId) async {
-  bool isDeleted =   await claimsApi().deleteCarsSurvey(carId, userId);
+  bool isDeleted =   await claimsApi().deleteCarsSurvey(carId, userId,token);
      setState(() {
 
      });
      return isDeleted;
   }
-  _insertLossCar(String notification, String userId) async {
-     await claimsApi().insertLossCar(notification, userId);
-     setState(() {
+ Future<String> _insertLossCar(String notification, String userId) async {
+   String a=  await claimsApi().insertLossCar(notification, userId,token);
 
-     });
+     return a;
+  }
+  FutureOr onGoBack(dynamic value) {
+    //refreshData();
+    setState(() {});
   }
   _insertCarsSurvey(String carId,String userId) async{
-    await claimsApi().insertCarsSurvey(carId, userId);
+    await claimsApi().insertCarsSurvey(carId, userId,token);
 
   }
   void _loadUserId() {
     setState(() {
       this.savedUid = this._prefs?.getString(userIDPrefKey) ?? "";
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
     });
   }
 }

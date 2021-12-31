@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,8 +60,8 @@ class _DriverLicenceDashboardState extends State<DriverLicenceDashboard> {
                   children: <Widget>[
 
                     // Text(""),
-                    makeDashboardItem2("Front Side Of Driver License", savedFrontLicense.isNotEmpty?Icons.check:Icons.camera,"/DriverLicenceImage",context,'','',''),
-                    makeDashboardItem2("Back Side Of Driver License",savedBacktLicense.isNotEmpty?Icons.check:Icons.camera,"/BackDriverLicenceImage",context,'','',''),
+                    makeDashboardItem2("Front Side Of Driver License", savedFrontLicense.isNotEmpty?Icons.check:Icons.camera,"/DriverLicenceImage",context,'','','',onGoBack("")),
+                    makeDashboardItem2("Back Side Of Driver License",savedBacktLicense.isNotEmpty?Icons.check:Icons.camera,"/BackDriverLicenceImage",context,'','','',onGoBack("")),
 
 
                     //makeDashboardItem("", Icons.task,"/",context),
@@ -132,5 +134,9 @@ class _DriverLicenceDashboardState extends State<DriverLicenceDashboard> {
       this.savedFrontLicense=this._prefs?.getString(frontLicencePrefKey)??"";
 
     });
+    
+  }
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
   }
 }

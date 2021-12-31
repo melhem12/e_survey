@@ -7,6 +7,7 @@ import 'package:e_survey/utility/app_url.dart';
 import 'package:flutter/material.dart';
 import 'package:e_survey/service/companyService.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class SearchSurvey extends StatefulWidget {
 
 
@@ -22,7 +23,19 @@ String passNum='';
 String policyNumber='';
 String plateNum='';
 String plateChar='';
-
+static const String tokenPrefKey = 'token_pref';
+String token='';
+SharedPreferences? _prefs;
+@override
+  void initState() {
+  SharedPreferences.getInstance().then((prefs) {
+    setState(() => this._prefs = prefs);
+    _loadUserId();
+  });
+  log("..........");
+  log(token);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -62,7 +75,7 @@ String plateChar='';
 
                     child :  FutureBuilder<List<Company>>(
 
-                          future: CompanyService().get_data(),
+                          future: CompanyService().get_data(token),
                           builder: (BuildContext context,
                               AsyncSnapshot<List<Company>> snapshot) {
                             if (!snapshot.hasData) return CircularProgressIndicator();
@@ -333,6 +346,11 @@ Navigator.pushNamed(context, "/Survey",arguments: SearrchSurveyArgs(_company.com
           )),
     );;
   }
+void _loadUserId() {
+  setState(() {
+    this.token=this._prefs?.getString(tokenPrefKey)??"";
 
+  });
+}
 }
 

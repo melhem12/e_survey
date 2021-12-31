@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/pages/BackCarRegistration.dart';
 import 'package:e_survey/pages/BackLicenseImage.dart';
@@ -10,6 +12,7 @@ import 'package:e_survey/pages/RegistrationDashboard.dart';
 import 'package:e_survey/pages/Vin.dart';
 import 'package:e_survey/pages/driverLicenseImage.dart';
 import 'package:e_survey/pages/parts.dart';
+import 'package:e_survey/pages/requiredDocuments.dart';
 import 'package:flutter/material.dart';
 
 InputDecoration buildInputDecoration(String hintText, IconData icon) {
@@ -47,6 +50,7 @@ Card makeDashboardItem(String title, IconData icon,String path,BuildContext cont
               SizedBox(height: 20.0),
               new Center(
                 child: new Text(title,
+                    textAlign: TextAlign.center,
                     style:
                     new TextStyle(fontSize: 18.0, color: Colors.black)),
               )
@@ -56,13 +60,13 @@ Card makeDashboardItem(String title, IconData icon,String path,BuildContext cont
       ));
 }
 
-Card makeDashboardItem2(String title, IconData icon, String path,BuildContext context,String carId ,String var1 ,String var2) {
+Card makeDashboardItem2(String title, IconData icon, String path,BuildContext context,String carId ,String var1 ,String var2, FutureOr futureOr) {
   return Card(
       elevation: 2,
       margin: new EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
-        child: new InkWell(
+        child: InkWell(
           onTap: () {if(
           path=='/DriverLicenceDashboard'
           ){
@@ -107,12 +111,13 @@ Card makeDashboardItem2(String title, IconData icon, String path,BuildContext co
           if(
           path=='/vin'
           ){
+            var value ;
             Navigator.push(context,MaterialPageRoute(builder: (context)=>Vin()));
           }
           if(
           path=='/policy'
           ){
-            Navigator.push(context,MaterialPageRoute(builder: (context)=>Policy()));
+            Navigator.push(context,MaterialPageRoute(builder: (context)=>Policy())).then((value) => futureOr);
           }
           },
           child: Column(
@@ -130,6 +135,8 @@ Card makeDashboardItem2(String title, IconData icon, String path,BuildContext co
               SizedBox(height: 20.0),
               new Center(
                 child: new Text(title,
+                    textAlign: TextAlign.center,
+
                     style:
                     new TextStyle(fontSize: 18.0, color: Colors.black)),
               )
@@ -137,6 +144,7 @@ Card makeDashboardItem2(String title, IconData icon, String path,BuildContext co
           ),
         ),
       ));
+
 }
 
 
@@ -159,3 +167,4 @@ MaterialButton longButtons(String title, Function fun,
         borderRadius: BorderRadius.all(Radius.circular(10))),
   );
 }
+

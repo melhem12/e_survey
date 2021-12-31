@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -59,8 +61,8 @@ class _RegistrationDashboardState extends State<RegistrationDashboard> {
                   children: <Widget>[
 
                     // Text(""),
-                    makeDashboardItem2("Front Side Of Car Registration", savedFrontCarRegistration.isNotEmpty?Icons.check:Icons.camera,"/FrontCarRegistrationImage",context,'','',''),
-                    makeDashboardItem2("Back Side Of Car Registration",savedBackCarRegistration.isNotEmpty?Icons.check:Icons.camera,"/BackCarRegistrationImage",context,'','',''),
+                    makeDashboardItem2("Front Side Of Car Registration", savedFrontCarRegistration.isNotEmpty?Icons.check:Icons.camera,"/FrontCarRegistrationImage",context,'','','',onGoBack("")),
+                    makeDashboardItem2("Back Side Of Car Registration",savedBackCarRegistration.isNotEmpty?Icons.check:Icons.camera,"/BackCarRegistrationImage",context,'','','',onGoBack("")),
 
 
                     //makeDashboardItem("", Icons.task,"/",context),
@@ -133,5 +135,8 @@ class _RegistrationDashboardState extends State<RegistrationDashboard> {
       this.savedFrontCarRegistration=this._prefs?.getString(frontCarRegistrationPrefKey)??"";
 
     });
+  }
+  FutureOr onGoBack(dynamic value) {
+    setState(() {});
   }
 }

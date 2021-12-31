@@ -2,6 +2,7 @@ import 'package:e_survey/service/mySurveyApi.dart';
 import 'package:e_survey/utility/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
 
@@ -11,14 +12,27 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int counter=10;
+  SharedPreferences? _prefs;
+
+  static const String tokenPrefKey = 'token_pref';
+  String token ="";
   @override
   void initState()  {
-    asyncMethod();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() =>
+      this._prefs=prefs);
+      _loadUser();
+      asyncMethod();
+    }
+    );
+    
+
+
     super.initState();
   }
 
   void asyncMethod() async {
-   int  count=  await mySurveyApi().get_count("MMEHDI");
+   int  count=  await mySurveyApi().get_count("MMEHDI",token);
 setState(() {
   counter=count;
 }
@@ -58,9 +72,9 @@ mainAxisAlignment: MainAxisAlignment.start,
     children: <Widget>[
 
       // Text(""),
-      makeDashboardItem("My Survey", Icons.task,"/mySurvey",context),
+      makeDashboardItem("My Survey"+"\n"+counter.toString(), Icons.task,"/mySurvey",context),
       makeDashboardItem("Search My Survey", Icons.search,"/HistorySearch",context),
-      makeDashboardItem("Daily Task Count "  + counter.toString(), Icons.format_list_numbered,"",context),
+    //  makeDashboardItem("Daily Task Count "  + counter.toString(), Icons.format_list_numbered,"",context),
 
     ],
   ),
@@ -101,5 +115,11 @@ mainAxisAlignment: MainAxisAlignment.start,
 
 
     );
+  }
+  void _loadUser(){
+    setState(() {
+      this.token=this._prefs?.getString(tokenPrefKey)??"";
+
+    });
   }
 }
