@@ -7,6 +7,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:e_survey/Models/InsuranceCompany.dart';
 import 'package:e_survey/Models/PolicyType.dart';
 import 'package:e_survey/Models/body_type.dart';
+import 'package:flutter_mobile_vision_2/flutter_mobile_vision_2.dart';
 import 'package:e_survey/Models/brand.dart';
 import 'package:e_survey/Models/car_trade_mark.dart';
 import 'package:e_survey/Models/company.dart';
@@ -115,6 +116,7 @@ class _DataInputCarInformationState extends State<DataInputCarInformation> {
   static const String userIDPrefKey = 'userId_pref';
   String savedUid = "";
   String hintDoors="Select doors";
+  bool isInitilized = false;
   String hintBrand="Select brand";
   String hinttradeMark="Select tadeMark";
   String hintSize="Select vehicle size";
@@ -132,6 +134,28 @@ late PolicyType _policyType =PolicyType(code: '', description: '');
 
 
 
+
+
+
+  int? _cameraOcr = FlutterMobileVision.CAMERA_BACK;
+  bool _autoFocusOcr = true;
+  bool _torchOcr = false;
+  bool _multipleOcr = false;
+  bool _waitTapOcr = false;
+  bool _showTextOcr = true;
+  Size? _previewOcr;
+  List<OcrText> _textsOcr = [];
+
+
+
+
+
+
+
+
+
+
+
   double height = 15;
   final yearController = TextEditingController();
   final policyNumController = TextEditingController();
@@ -144,6 +168,14 @@ late PolicyType _policyType =PolicyType(code: '', description: '');
   String token ="";
   @override
   void initState() {
+    FlutterMobileVision.start().then((previewSizes) => setState(() {
+      // if (previewSizes[_cameraBarcode] == null) {
+      //   return;
+      // }
+     // _previewBarcode = previewSizes[_cameraBarcode]!.first;
+      _previewOcr = previewSizes[_cameraOcr]!.first;
+    //  _previewFace = previewSizes[_cameraFace]!.first;
+    }));
     SharedPreferences.getInstance().then((prefs) {
       setState(() => this._prefs = prefs);
       _loadUserId();
@@ -235,6 +267,45 @@ late PolicyType _policyType =PolicyType(code: '', description: '');
     }
   }
 
+  Future<Null> _read() async {
+    List<OcrText> texts = [];
+    Size _scanpreviewOcr = _previewOcr ?? FlutterMobileVision.PREVIEW;
+    try {
+      texts = await FlutterMobileVision.read(
+        flash: _torchOcr,
+        autoFocus: _autoFocusOcr,
+        multiple: _multipleOcr,
+        waitTap: true,
+        //OPTIONAL: close camera after tap, even if there are no detection.
+        //Camera would usually stay on, until there is a valid detection
+        forceCloseCameraOnTap: true,
+        //OPTIONAL: path to save image to. leave empty if you do not want to save the image
+        imagePath: '',
+        showText: _showTextOcr,
+        preview: _previewOcr ?? FlutterMobileVision.PREVIEW,
+        scanArea: Size(_scanpreviewOcr.width - 20, _scanpreviewOcr.height - 20),
+        camera: _cameraOcr ?? FlutterMobileVision.CAMERA_BACK,
+        fps: 2.0,
+
+      );
+
+    } on Exception {
+      texts.add(OcrText('Failed to recognize text.'));
+    }
+log(texts.toString());
+    log("vvvvvvvvvvvv");
+    if (!mounted) return;
+    setState(() {
+      _textsOcr = texts;
+      chasisController.text = _textsOcr.first.value;
+    }  );
+
+    // setState(() { _textsOcr = texts;
+    // chasisController.text=_textsOcr.first.value;
+    // }
+    // );
+
+  }
 
   getDoorsObject() async {
     List<Doors> doors = await futureDoors as List<Doors>;
@@ -655,9 +726,13 @@ late PolicyType _policyType =PolicyType(code: '', description: '');
                       style: TextStyle(
                         color: Colors.blue,
                       ),
-                      // onTap: () {
-                      //   _pickImageFromCamera();
-                      // },
+                      onTap: () {
+    if (Theme.of(context).platform == TargetPlatform.android) {
+//_startScan();
+    _read();
+    }
+                      //  _pickImageFromCamera();
+                      },
                       decoration: InputDecoration(
                         labelText: 'Chasis Number',
                         isDense: true,
@@ -1202,3 +1277,4 @@ Future<bool> update(String carId,String carBrandId,String carTradeMarkId,String 
   return updated;
 }
 }
+

@@ -1236,6 +1236,7 @@ id fragment_container_view_tag
 id ghost_view
 id glide_custom_view_target_tag
 id gone
+id graphic_overlay
 id group_divider
 id groups
 id home
@@ -1285,6 +1286,7 @@ id parentPanel
 id parent_matrix
 id percent
 id pin
+id preview
 id progress_circular
 id progress_horizontal
 id radio
@@ -1298,6 +1300,7 @@ id right_side
 id save_image_matrix
 id save_non_transition_alpha
 id save_scale_type
+id scan_area_overlay
 id screen
 id scroll
 id scrollIndicatorDown
@@ -1368,6 +1371,7 @@ id title_template
 id toolbar_album_bar
 id toolbar_picker_bar
 id top
+id topLayout
 id topPanel
 id touch_outside
 id transition_current_scene
@@ -1453,6 +1457,7 @@ layout activity_detail_actiivy
 layout activity_photo_album
 layout activity_photo_picker
 layout album_item
+layout capture
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
