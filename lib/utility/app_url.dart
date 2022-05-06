@@ -1,6 +1,6 @@
 class AppUrl {
 
-  static const String baseUrl = 'http://192.168.1.108:8083/api/v1';
+  static const String baseUrl = 'http://192.168.16.106:8083/api/v1';
 
   static const String login = baseUrl + '/auth/login';
  // static const String forgotPassword = baseUrl + '/forgot_password';
@@ -39,4 +39,7 @@ class AppUrl {
 
   static const String policyTypes = baseUrl + '/constant/getPolicyType';
   static const String insuranceCompanies = baseUrl + '/constant/getInsuranceCompany';
+  static const String missions = baseUrl + '/temaController/missions';
+
+
 }

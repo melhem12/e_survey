@@ -51,6 +51,11 @@ dependencies:
   multi_image_picker2: ^5.0.02
   media_picker_widget: ^0.0.7
   flutter_mobile_vision_2: ^0.1.13
+  get: ^4.6.1
+  group_button: ^4.6.0
+  get_storage: ^2.0.3
+  firebase_core: ^1.12.0
+  firebase_messaging: ^11.2.7
 
 
 

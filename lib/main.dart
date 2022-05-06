@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:e_survey/View/expert_missions.dart';
 import 'package:e_survey/args/personalInfoArgs.dart';
 import 'package:e_survey/pages/CarInfoInput.dart';
 import 'package:e_survey/pages/DriverLicenceDashboard.dart';
@@ -19,42 +20,52 @@ import 'package:e_survey/pages/searchSurvey.dart';
 import 'package:e_survey/pages/signin.dart';
 import 'package:e_survey/pages/survey.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'args/claimsListArgs.dart';
 
-void main() => runApp(MaterialApp(
-  initialRoute: '/home',
-  // onGenerateRoute: (settings){
-  //   if(settings.name==DataInputPersonalInformation.routeName){
-  //     final args = settings.arguments as claimsListArgs ;
-  //     log("tttttttttttttttt");
-  //     log(args.carId);
-  //     log("tttttttttttttttt");
-  //     return MaterialPageRoute(
-  //       builder: (context) {
-  //         return  DataInputPersonalInformation(
-  //           companyCode: args.companyCode.toString(),
-  //           carId: args.carId.toString(),
-  //
-  //           vehicleNumber: args.vehicleNumber.toString(),
-  //         );
-  //       },
-  //     );
-  //   }
-  // },
-  routes: {
-    '/home': (context) =>Home(),
-    '/dashboard': (context) => Dashboard(),
-    '/': (context) => Signin(),
-    '/mySurvey': (context) => mySurvey(),
-    '/Survey': (context) => Survey(),
-    '/SearchSurvey': (context) => SearchSurvey(),
-    '/CarInfoInput': (context) => CarInfoInput(),
-    '/RequiredDocuments': (context) => RequiredDocuments(),
-    '/DriverLicenceImage': (context) => DriverLicenceImage(),
-    '/DriverLicenceDashboard': (context) => DriverLicenceDashboard(),
-    '/HistorySearch': (context) => HistorySearch(),
-    '/policy': (context) => Policy(),
+void  main()  async=>
+    {
+      await GetStorage.init(),
+      runApp(GetMaterialApp(
+        initialRoute: '/',
+// onGenerateRoute: (settings){
+//   if(settings.name==DataInputPersonalInformation.routeName){
+//     final args = settings.arguments as claimsListArgs ;
+//     log("tttttttttttttttt");
+//     log(args.carId);
+//     log("tttttttttttttttt");
+//     return MaterialPageRoute(
+//       builder: (context) {
+//         return  DataInputPersonalInformation(
+//           companyCode: args.companyCode.toString(),
+//           carId: args.carId.toString(),
+//
+//           vehicleNumber: args.vehicleNumber.toString(),
+//         );
+//       },
+//     );
+//   }
+// },
+        routes: {
+          '/home': (context) => Home(),
+          '/missions': (context) => ExpertMissions(),
+          '/dashboard': (context) => Dashboard(),
+          '/': (context) => Signin(),
+          '/mySurvey': (context) => mySurvey(),
+          '/Survey': (context) => Survey(),
+          '/SearchSurvey': (context) => SearchSurvey(),
+          '/CarInfoInput': (context) => CarInfoInput(),
+          '/RequiredDocuments': (context) => RequiredDocuments(),
+          '/DriverLicenceImage': (context) => DriverLicenceImage(),
+          '/DriverLicenceDashboard': (context) => DriverLicenceDashboard(),
+          '/HistorySearch': (context) => HistorySearch(),
+          '/policy': (context) => Policy(),
 
-  },
-));
+        },
+
+      ))
+
+    }
+    ;

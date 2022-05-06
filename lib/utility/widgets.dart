@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:e_survey/View/expert_missions.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/pages/BackCarRegistration.dart';
 import 'package:e_survey/pages/BackLicenseImage.dart';
@@ -14,6 +15,7 @@ import 'package:e_survey/pages/driverLicenseImage.dart';
 import 'package:e_survey/pages/parts.dart';
 import 'package:e_survey/pages/requiredDocuments.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 InputDecoration buildInputDecoration(String hintText, IconData icon) {
   return InputDecoration(
@@ -33,6 +35,9 @@ Card makeDashboardItem(String title, IconData icon,String path,BuildContext cont
         decoration: BoxDecoration(color: Colors.white),
         child: new InkWell(
           onTap: () {
+            if(path=="/missions"){
+              Get.to(()=>ExpertMissions());
+            }
             Navigator.pushNamed(context,path);
           },
           child: Column(
@@ -72,6 +77,7 @@ Card makeDashboardItem2(String title, IconData icon, String path,BuildContext co
           ){
           Navigator.push(context,MaterialPageRoute(builder: (context)=>DriverLicenceDashboard()));
           }
+
           if(
           path=='/DriverLicenceImage'
           ){

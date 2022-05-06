@@ -1,15 +1,19 @@
-import 'dart:math';
+import 'dart:developer';
 
+import 'package:e_survey/View/expert_missions.dart';
 import 'package:e_survey/utility/app_url.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_svg/svg.dart';
 import 'package:e_survey/pages/dashboard.dart';
 import 'package:e_survey/Models//user.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'bridge_page.dart';
 import 'home.dart';
 
 class Signin extends StatefulWidget {
@@ -32,6 +36,7 @@ String savedUid ="";
     SharedPreferences.getInstance().then((prefs) {
       setState(() =>
       this._prefs=prefs);
+
 // _loadUserId();
 //       if(savedUid.isNotEmpty){
 //         Navigator.pushNamed(context, "/home");
@@ -57,13 +62,41 @@ String savedUid ="";
         // });
     print(res.body);
    Map <String,dynamic>map =  jsonDecode(res.body);
+
      //data = json.decode(res.body);
     String uid=map['userId'];
     String tok =map['token'];
+    bool isTemaUser  =map['temaUser'];
+    bool isESurveyUser  = map['esurveyUser'];
+
     print(tok);
     _setStringPref(uid,tok);
-    Navigator.push(
-        context, new MaterialPageRoute(builder: (context) => Home()));
+    final box = GetStorage();
+    box.write('userId', uid);
+    box.write('token', tok);
+
+    if(isTemaUser && isESurveyUser){
+      log("bridgeee");
+
+
+      Get.to(() => Bridge());
+
+    }
+else
+    if(isESurveyUser){
+      Navigator.push(
+          context, new MaterialPageRoute(builder: (context) => Home()));
+    }
+    else
+    if(isTemaUser){
+
+          Get.to(() => ExpertMissions());
+    }
+
+
+
+
+
   }
 
   User user = User('', '');
