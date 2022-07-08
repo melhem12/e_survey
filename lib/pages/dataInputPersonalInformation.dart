@@ -66,7 +66,6 @@ class _DataInputPersonalInformationState extends State<DataInputPersonalInformat
   String token ="";
   @override
   void initState() {
-
     SharedPreferences.getInstance().then((prefs) {
       setState(() => this._prefs = prefs);
       _loadUserId();

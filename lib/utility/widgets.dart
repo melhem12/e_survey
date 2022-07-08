@@ -12,6 +12,7 @@ import 'package:e_survey/pages/Policy.dart';
 import 'package:e_survey/pages/RegistrationDashboard.dart';
 import 'package:e_survey/pages/Vin.dart';
 import 'package:e_survey/pages/driverLicenseImage.dart';
+import 'package:e_survey/pages/home.dart';
 import 'package:e_survey/pages/parts.dart';
 import 'package:e_survey/pages/requiredDocuments.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +38,12 @@ Card makeDashboardItem(String title, IconData icon,String path,BuildContext cont
           onTap: () {
             if(path=="/missions"){
               Get.to(()=>ExpertMissions());
+              //Navigator.pushNamed(context, path);
+             // Get.toNamed(path);
             }
-            Navigator.pushNamed(context,path);
+            else {
+              Get.toNamed(path);
+            }
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

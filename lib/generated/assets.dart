@@ -2,6 +2,5 @@
 class Assets {
   Assets._();
 
-  static const String assetsTessdataConfig = 'assets/tessdata_config.json';
 
 }

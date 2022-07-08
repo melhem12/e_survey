@@ -1,14 +1,25 @@
 import 'package:e_survey/utility/widgets.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 class Bridge extends StatefulWidget {
   const Bridge({Key? key}) : super(key: key);
-
   @override
   _BridgeState createState() => _BridgeState();
 }
 
+
 class _BridgeState extends State<Bridge> {
+  final box = GetStorage();
+
+  @override
+  void initState() {
+     FirebaseMessaging.instance
+        .subscribeToTopic(box.read("userId").toString());
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 

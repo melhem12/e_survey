@@ -49,11 +49,13 @@ class Mission {
     required this.accidentInsurerName,
     required this.accidentCallCenterMobile,
     required this.accidentCallerName,
+
     required this.accidentContactNumber,
     required this.accidentStatus,
     required this.accdentArrivedStatus,
     required this.time,
     required this.date,
+    required this.accidentMake,
   });
 
   String accidentId;
@@ -83,7 +85,7 @@ class Mission {
   bool accdentArrivedStatus;
   String time;
   String date;
-
+  String accidentMake ;
   factory Mission.fromJson(Map<String, dynamic> json) => Mission(
     accidentId: json["accidentId"],
     accidentNotificationId: json["accidentNotificationId"],
@@ -112,6 +114,7 @@ class Mission {
     accdentArrivedStatus: json["accdentArrivedStatus"],
     time: json["time"],
     date: json["date"],
+   accidentMake :json["accidentMake"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -142,5 +145,6 @@ class Mission {
     "accdentArrivedStatus": accdentArrivedStatus,
     "time": time,
     "date": date,
+    "accidentMake":accidentMake,
   };
 }

@@ -17,7 +17,6 @@ import 'package:e_survey/args/BigArgs.dart';
 import 'package:e_survey/args/CarImputArgs.dart';
 import 'package:e_survey/args/claimsListArgs.dart';
 import 'package:e_survey/args/personalInfoArgs.dart';
-import 'package:simple_ocr_plugin/simple_ocr_plugin.dart';
 import 'package:e_survey/pages/requiredDocuments.dart';
 import 'package:e_survey/service/constantsApi.dart';
 import 'package:e_survey/service/updatingInformationService.dart';
@@ -1236,25 +1235,25 @@ log(texts.toString());
     if (pickedFile != null) {
       setState(() => this._imageFile = File(pickedFile.path));
       log(pickedFile.path);
-      _onRecogniseTap(pickedFile.path);
+     // _onRecogniseTap(pickedFile.path);
     }
   }
-  Future<void> _onRecogniseTap( String path) async {
-    //args support android / Web , i don't have a mac
-    log("read from image");
-
-
-    try {
-      text = (await SimpleOcrPlugin.performOCR(path))!;
- parsedText =jsonDecode(text)["text"];
-    } catch(e) {
-      print("exception on OCR operation: ${e.toString()}");
-    }
-    log(text);
-  setState(() {
-      chasisController.text = parsedText;
-    });
-  }
+ //  Future<void> _onRecogniseTap( String path) async {
+ //    //args support android / Web , i don't have a mac
+ //    log("read from image");
+ //
+ //
+ //    try {
+ //      text = (await SimpleOcrPlugin.performOCR(path))!;
+ // parsedText =jsonDecode(text)["text"];
+ //    } catch(e) {
+ //      print("exception on OCR operation: ${e.toString()}");
+ //    }
+ //    log(text);
+ //  setState(() {
+ //      chasisController.text = parsedText;
+ //    });
+ //  }
 
   void _loadUserId() {
     setState(() {

@@ -23,6 +23,8 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
+  final box = GetStorage();
+
   SharedPreferences? _prefs;
   static const String tokenPrefKey = 'token_pref';
   static const String userIDPrefKey = 'userId_pref';
@@ -43,8 +45,36 @@ String savedUid ="";
 //       }
     });
 
+    if(box.read('isTemaUser')=="true" && box.read('isESurveyUser')=="true") {
+      log("loged in ");
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Bridge()));
+      });
+    }
+    else
+    if(box.read('isESurveyUser')=="true"){
+
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Home()));
+      });
+    }
+    else
+    if(box.read('isTemaUser')=="true"){
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => ExpertMissions()));
+      });
+    }
+
     super.initState();
+
   }
+
+
   Future save() async {
     var res = await http.post(Uri.parse(AppUrl.login),
         headers: <String, String>{
@@ -71,26 +101,35 @@ String savedUid ="";
 
     print(tok);
     _setStringPref(uid,tok);
-    final box = GetStorage();
     box.write('userId', uid);
     box.write('token', tok);
+    box.write('isTemaUser',isTemaUser.toString());
+    box.write('isESurveyUser',isESurveyUser.toString());
 
     if(isTemaUser && isESurveyUser){
       log("bridgeee");
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Bridge()));
+      });
 
-
-      Get.to(() => Bridge());
 
     }
 else
     if(isESurveyUser){
-      Navigator.push(
-          context, new MaterialPageRoute(builder: (context) => Home()));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => Home()));
+      });
     }
     else
     if(isTemaUser){
 
-          Get.to(() => ExpertMissions());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => ExpertMissions()));
+      });
+
     }
 
 
@@ -102,165 +141,168 @@ else
   User user = User('', '');
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-        body: Stack(
+        body: SingleChildScrollView(
+          child: Stack(
       children: [
-        // Positioned(
-        //     top: 0,
-        //     child: SvgPicture.asset(
-        //       'assets/top.svg',
-        //       width: 400,
-        //       height: 150,
-        //     )),
-        Container(
-          alignment: Alignment.center,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 150,
-                ),
-                Text(
-                  "E Survey",
-                  style: GoogleFonts.pacifico(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 50,
-                      color: Colors.blue),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    controller: TextEditingController(text: user.userId),
-                    onChanged: (value) {
-                      user.userId = value;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter userId';
-                      }
-                      return null;
-                    },
-                      //else if (RegExp(
-                    //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                    //       .hasMatch(value)) {
-                    //     return null;
-                    //   } else {
-                    //     return 'Enter valid email';
-                    //   }
-                    // },
-                    decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.email,
+          // Positioned(
+          //     top: 0,
+          //     child: SvgPicture.asset(
+          //       'assets/top.svg',
+          //       width: 400,
+          //       height: 150,
+          //     )),
+          Container(
+            alignment: Alignment.center,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 150,
+                  ),
+                  Text(
+                    "Claims",
+                    style: GoogleFonts.pacifico(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 50,
+                        color: Colors.blue),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextFormField(
+                      controller: TextEditingController(text: user.userId),
+                      onChanged: (value) {
+                        user.userId = value;
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Enter userId';
+                        }
+                        return null;
+                      },
+                        //else if (RegExp(
+                      //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      //       .hasMatch(value)) {
+                      //     return null;
+                      //   } else {
+                      //     return 'Enter valid email';
+                      //   }
+                      // },
+                      decoration: InputDecoration(
+                          icon: Icon(
+                            Icons.email,
+                            color: Colors.blue,
+                          ),
+                          hintText: 'Enter User Id',
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.blue)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.blue)),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.red)),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.red))),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextFormField(
+                      controller: TextEditingController(text: user.password),
+                      onChanged: (value) {
+                        user.password = value;
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Enter password';
+                        }
+                        return null;
+                      },
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          icon: Icon(
+                            Icons.vpn_key,
+                            color: Colors.blue,
+                          ),
+                          hintText: 'Enter Password',
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.blue)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.blue)),
+                          errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.red)),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.red))),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(55, 16, 16, 0),
+                    child: Container(
+                      height: 50,
+                      width: 400,
+                      child: FlatButton(
                           color: Colors.blue,
-                        ),
-                        hintText: 'Enter User Id',
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.blue)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.blue)),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.red)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.red))),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0)),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              save();
+                            } else {
+                              print("not ok");
+                            }
+                          },
+                          child: Text(
+                            "Signin",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          )),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    controller: TextEditingController(text: user.password),
-                    onChanged: (value) {
-                      user.password = value;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter password';
-                      }
-                      return null;
-                    },
-                    obscureText: true,
-                    decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.vpn_key,
-                          color: Colors.blue,
-                        ),
-                        hintText: 'Enter Password',
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.blue)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.blue)),
-                        errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.red)),
-                        focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.red))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(55, 16, 16, 0),
-                  child: Container(
-                    height: 50,
-                    width: 400,
-                    child: FlatButton(
-                        color: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0)),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            save();
-                          } else {
-                            print("not ok");
-                          }
-                        },
-                        child: Text(
-                          "Signin",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        )),
-                  ),
-                ),
-                // Padding(
-                //     padding: const EdgeInsets.fromLTRB(95, 20, 0, 0),
-                //     child: Row(
-                //       children: [
-                //         // Text(
-                //         //   "Not have Account ? ",
-                //         //   style: TextStyle(
-                //         //       color: Colors.black, fontWeight: FontWeight.bold),
-                //         // ),
-                //         // InkWell(
-                //         //   // onTap: () {
-                //         //   //   Navigator.push(
-                //         //   //       context,
-                //         //   //       new MaterialPageRoute(
-                //         //   //           builder: (context) => Signup()));
-                //         //   // },
-                //         //   // child: Text(
-                //         //   //   "Esurvey",
-                //         //   //   style: TextStyle(
-                //         //   //       color: Colors.blue,
-                //         //   //       fontWeight: FontWeight.bold),
-                //         //   // ),
-                //         // ),
-                //       ],
-                //     ))
-              ],
+                  // Padding(
+                  //     padding: const EdgeInsets.fromLTRB(95, 20, 0, 0),
+                  //     child: Row(
+                  //       children: [
+                  //         // Text(
+                  //         //   "Not have Account ? ",
+                  //         //   style: TextStyle(
+                  //         //       color: Colors.black, fontWeight: FontWeight.bold),
+                  //         // ),
+                  //         // InkWell(
+                  //         //   // onTap: () {
+                  //         //   //   Navigator.push(
+                  //         //   //       context,
+                  //         //   //       new MaterialPageRoute(
+                  //         //   //           builder: (context) => Signup()));
+                  //         //   // },
+                  //         //   // child: Text(
+                  //         //   //   "Esurvey",
+                  //         //   //   style: TextStyle(
+                  //         //   //       color: Colors.blue,
+                  //         //   //       fontWeight: FontWeight.bold),
+                  //         //   // ),
+                  //         // ),
+                  //       ],
+                  //     ))
+                ],
+              ),
             ),
-          ),
-        )
+          )
       ],
-    ));
+    ),
+        ));
   }
   Future<void> _setStringPref(String userId ,String token) async {
 
