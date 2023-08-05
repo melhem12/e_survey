@@ -527,7 +527,7 @@ class _ExpertMissionsState extends State<ExpertMissions> {
         AwesomeDialog(context: context ,title: "services",body:Column(
           children: [
             const Text('Please make sure you enable GPS and try again'),
-            FlatButton(child: Text('Ok'),
+            TextButton(child: Text('Ok'),
                 onPressed: () {
                   final AndroidIntent intent = AndroidIntent(
                       action: 'android.settings.LOCATION_SOURCE_SETTINGS');

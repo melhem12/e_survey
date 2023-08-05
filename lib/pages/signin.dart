@@ -146,6 +146,7 @@ else
         body: SingleChildScrollView(
           child: Stack(
       children: [
+
           // Positioned(
           //     top: 0,
           //     child: SvgPicture.asset(
@@ -254,10 +255,17 @@ else
                     child: Container(
                       height: 50,
                       width: 400,
-                      child: FlatButton(
-                          color: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0)),
+                      child: TextButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.blue),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                  )
+                          )),
+                          // color: Colors.blue,
+                          // shape: RoundedRectangleBorder(
+                          //     borderRadius: BorderRadius.circular(16.0)),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               save();

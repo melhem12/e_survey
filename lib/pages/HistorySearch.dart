@@ -252,11 +252,18 @@ String from ='';
                               ),
                               ),
                               Expanded(flex: 2,
-                                  child: FlatButton(
-                                      minWidth: double.infinity,
-                                      color: Colors.blue,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16.0)),
+                                  child: TextButton(
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all(Colors.blue),
+                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(16.0),
+
+                                            )
+                                        )
+                                        ,//    minWith: double.infinity,
+
+                                      ),
                                       onPressed: () async {
                                         log(passNumber!);
                                         myFuture = mySurveyApi().searchHistory(userId, passNumber!, from,_textEditingToController.text.toString(),_company.companyId.toString(),token);
